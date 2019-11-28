@@ -12,6 +12,8 @@ class JsonSchema(NamedTuple):
     gltf_webgl: Any = None
     gltf_uriType: Any = None
     properties: Dict[str, Any] = {}
+    oneOf: Any = None
+    anyOf: Any = None
     #
     additionalProperties: Any = None
     minProperties: Any = None
@@ -29,13 +31,28 @@ class JsonSchema(NamedTuple):
     dependencies: List[Any] = []
     required: List[Any] = []
 
-    def title_of_type(self):
-        return self.title if self.title else self.type
+    def title_or_type(self):
+        value = f'{self.title}({self.type})' if self.title else self.type
+        if self.anyOf:
+
+            def enum_value(value):
+                if self.type in 'string':
+                    return value['enum'][0]
+                else:
+                    return f'{value["description"]}={value["enum"][0]}'
+
+            enum_values = [
+                enum_value(value) for value in self.anyOf if 'enum' in value
+            ]
+            value = f'enum {value} {{' + ', '.join(enum_values) + '}'
+        # if self.path:
+        #     value += ': ' + self.path.name
+        return value
 
     def __str__(self):
         if self.type == 'object':
-            return self.title_of_type()
+            return self.title_or_type()
         elif self.type == 'array':
-            return f'{self.items.title_of_type()}[]'
+            return f'{self.items.title_or_type()}[]'
         else:
-            return self.type
+            return self.title_or_type()

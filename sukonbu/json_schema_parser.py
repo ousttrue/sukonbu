@@ -76,7 +76,13 @@ class JsonSchemaParser:
                 parsed[k] = v
             del parsed['allOf']
 
-        for key in ['anyOf', 'not', 'oneOf']:
+        if 'anyOf' in parsed:
+            for x in parsed['anyOf']:
+                if 'type' in x:
+                    parsed['type'] = x['type']
+                    break
+
+        for key in ['not']:
             # skip
             if key in parsed:
                 del parsed[key]
@@ -112,6 +118,8 @@ class JsonSchemaParser:
                     'pattern',
                     'format',
                     #
+                    'anyOf',
+                    'oneOf',
                     #
                     'required',
                     'dependencies',
