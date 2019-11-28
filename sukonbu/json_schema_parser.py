@@ -136,3 +136,14 @@ class JsonSchemaParser:
         parsed = json.loads(text)
         processed = self.preprocess(parsed, entry_point.parent)
         root = self.from_dict(processed)
+
+    def print(self) -> None:
+        for key, js in self.schema_map.items():
+            print(js)
+            print('{')
+            for k, v in js.properties.items():
+                print(f'  {k}: {v}')
+            print('}')
+
+    def generate(self, dst: pathlib.Path) -> None:
+        print(f'dst: {dst}')

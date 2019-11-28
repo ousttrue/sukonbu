@@ -5,12 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
+            "name": "gltf JSON Schema",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/launch.py",
             "args": [
                 "${workspaceFolder}/glTF/specification/2.0/schema/glTF.schema.json",
+                "--dst",
+                "${workspaceFolder}/generated/python"
             ],
             "console": "integratedTerminal"
         }
