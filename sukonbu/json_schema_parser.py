@@ -1,12 +1,13 @@
 import json
 import pathlib
+from typing import Dict
 from .json_schema import JsonSchema
 
 
 class JsonSchemaParser:
     def __init__(self):
         self.path_map = {}
-        self.schema_map = {}
+        self.schema_map: Dict[str, JsonSchema] = {}
 
     def from_dict(self, root: dict) -> 'JsonSchema':
         '''
@@ -28,12 +29,11 @@ class JsonSchemaParser:
             if path:
                 if path in self.schema_map:
                     return self.schema_map[path]
-                js = JsonSchema(**node)
-                if path in self.schema_map:
-                    raise Exception()
-                else:
-                    self.schema_map[path] = js
-                return js
+
+            js = JsonSchema(**node)
+            if path:
+                self.schema_map[path] = js
+            return js
 
         return traverse(root)
 

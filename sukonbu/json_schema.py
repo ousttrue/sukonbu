@@ -29,22 +29,13 @@ class JsonSchema(NamedTuple):
     dependencies: List[Any] = []
     required: List[Any] = []
 
-    def traverse(self):
-        if self.type == 'array':
-            for x in self.items.traverse():
-                yield x
-        elif self.type == 'object':
-            for k, v in self.properties.items():
-                for x in v.traverse():
-                    yield x
-        yield self
+    def title_of_type(self):
+        return self.title if self.title else self.type
 
     def __str__(self):
-        name = ''
-        if self.path:
-            name = f': {self.path.name}'
-        if self.title:
-            return f'[{self.title}: {self.type}{name}]'
+        if self.type == 'object':
+            return self.title_of_type()
+        elif self.type == 'array':
+            return f'{self.items.title_of_type()}[]'
         else:
-            pass
-            a = 0
+            return self.type
