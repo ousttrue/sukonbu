@@ -29,23 +29,6 @@ class JsonSchema(NamedTuple):
     dependencies: List[Any] = []
     required: List[Any] = []
 
-    @staticmethod
-    def from_dict(root: Dict[str, Any]) -> 'JsonSchema':
-        def traverse(node: Dict[str, Any]):
-            # pass replace leaf to JsonSchema
-            props = node.get('properties')
-            if props:
-                node['properties'] = {
-                    key: traverse(prop)
-                    for key, prop in props.items()
-                }
-            items = node.get('items')
-            if items:
-                node['items'] = traverse(items)
-            return JsonSchema(**node)
-
-        return traverse(root)
-
     def traverse(self):
         if self.type == 'array':
             for x in self.items.traverse():

@@ -8,7 +8,10 @@ from .json_schema_parser import JsonSchemaParser
 
 def main():
     path = sys.argv[1]
-    JsonSchemaParser().process(pathlib.Path(path))
+    parser = JsonSchemaParser()
+    parser.process(pathlib.Path(path))
+    for key, js in parser.schema_map.items():
+        print(js)
 
 
 if __name__ == '__main__':

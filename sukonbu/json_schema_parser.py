@@ -5,7 +5,48 @@ from .json_schema import JsonSchema
 
 class JsonSchemaParser:
     def __init__(self):
-        pass
+        self.path_map = {}
+        self.schema_map = {}
+
+    def from_dict(self, root: dict) -> 'JsonSchema':
+        '''
+        replace dict to JsonSchema by depth first
+        '''
+        def traverse(node: dict):
+            # pass replace leaf to JsonSchema
+            props = node.get('properties')
+            if props:
+                node['properties'] = {
+                    key: traverse(prop)
+                    for key, prop in props.items()
+                }
+            items = node.get('items')
+            if items:
+                node['items'] = traverse(items)
+
+            path = node.get('path')
+            if path:
+                if path in self.schema_map:
+                    return self.schema_map[path]
+                js = JsonSchema(**node)
+                if path in self.schema_map:
+                    raise Exception()
+                else:
+                    self.schema_map[path] = js
+                return js
+
+        return traverse(root)
+
+    def get_or_read_ref(self, path: pathlib.Path) -> dict:
+        ref = self.path_map.get(path)
+        if ref:
+            return ref
+        text = path.read_text()
+        ref_parsed = json.loads(text)
+        ref = self.preprocess(ref_parsed, path.parent)
+        self.path_map[path] = ref
+        ref['path'] = path
+        return ref
 
     def preprocess(self, parsed: dict, directory: pathlib.Path):
         if '$schema' in parsed:
@@ -14,9 +55,8 @@ class JsonSchemaParser:
         if '$ref' in parsed:
             # replace
             path = directory / parsed['$ref']
-            text = path.read_text()
-            ref_parsed = json.loads(text)
-            ref = self.preprocess(ref_parsed, path.parent)
+            # print(path)
+            ref = self.get_or_read_ref(path)
             for k, v in ref.items():
                 parsed[k] = v
             del parsed['$ref']
@@ -24,9 +64,7 @@ class JsonSchemaParser:
         if 'allOf' in parsed:
             # inherited
             path = directory / parsed['allOf'][0]['$ref']
-            text = path.read_text()
-            ref_parsed = json.loads(text)
-            ref = self.preprocess(ref_parsed, path.parent)
+            ref = self.get_or_read_ref(path)
             for k, v in ref.items():
                 if k in parsed:
                     if k == 'properties':
@@ -39,6 +77,7 @@ class JsonSchemaParser:
             del parsed['allOf']
 
         for key in ['anyOf', 'not', 'oneOf']:
+            # skip
             if key in parsed:
                 del parsed[key]
 
@@ -88,10 +127,4 @@ class JsonSchemaParser:
         text = entry_point.read_text()
         parsed = json.loads(text)
         processed = self.preprocess(parsed, entry_point.parent)
-        root = JsonSchema.from_dict(processed)
-        # sio = io.StringIO()
-        # print(sio.getvalue())
-
-        for js in root.traverse():
-            if js.type == 'object' and not js.additionalProperties:
-                print(js)
+        root = self.from_dict(processed)
