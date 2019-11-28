@@ -6,8 +6,9 @@ from typing import NamedTuple, Any, List, Dict, Optional, TextIO
 
 
 class JsonSchema(NamedTuple):
+    path: Optional[pathlib.Path] = None
     title: str = ''
-    type: str = 'object'
+    type: str = 'unknown'
     description: str = ''
     gltf_detailedDescription: str = ''
     default: Any = None
@@ -59,7 +60,14 @@ class JsonSchema(NamedTuple):
         yield self
 
     def __str__(self):
-        return f'[{self.title}: {self.type}]'
+        name = ''
+        if self.path:
+            name = f': {self.path.name}'
+        if self.title:
+            return f'[{self.title}: {self.type}{name}]'
+        else:
+            pass
+            a = 0
 
 
 def preprocess(path: pathlib.Path):
@@ -67,6 +75,7 @@ def preprocess(path: pathlib.Path):
     parsed = json.loads(text)
     if not isinstance(parsed, dict):
         raise TypeError('not dict')
+    parsed['path'] = path
 
     def traverse(node, parents):
         keys = [key for key in node.keys()]
@@ -98,6 +107,7 @@ def preprocess(path: pathlib.Path):
                 else:
                     raise NotImplementedError()
             elif key in [
+                    'path',
                     'title',
                     'type',
                     'description',
@@ -145,7 +155,7 @@ def process(entry_point: pathlib.Path):
     # print(sio.getvalue())
 
     for js in root.traverse():
-        if js.type == 'object':
+        if js.type == 'object' and not js.additionalProperties:
             print(js)
 
 
