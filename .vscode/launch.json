@@ -12,9 +12,6 @@
             "args": [
                 "${workspaceFolder}/glTF/specification/2.0/schema/glTF.schema.json",
             ],
-            "env": {
-                "PYTHONPATH": "${workspaceFolderBasename}"
-            },
             "console": "integratedTerminal"
         }
     ]
