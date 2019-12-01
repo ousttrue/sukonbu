@@ -72,7 +72,7 @@ def generate(self: JsonSchemaParser, dst: pathlib.Path) -> None:
         if enum_values:
             default = js.default
             cls_name = get_class_name(name, js, parent)
-            if js.type == 'string':
+            if js.type == 'string' and default:
                 default = f'"{default}"'
             if default:
                 default = f'{cls_name}({default})'
@@ -101,7 +101,10 @@ def generate(self: JsonSchemaParser, dst: pathlib.Path) -> None:
     def type_with_default(src: Tuple[str, str]) -> str:
         return f'{src[0]} = {src[1]}'
 
-    def init_func(name: str, js: JsonSchema) -> str:
+    def init_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
+        if js.get_enum_values():
+            return f'if "{name}" in src: src["{name}"] = {get_class_name(name, js, parent)}(src["{name}"]) # noqa'
+
         if js.properties:
             return f'if "{name}" in src: src["{name}"] = {js.get_class_name()}.from_json(src["{name}"]) # noqa'
 
@@ -138,7 +141,7 @@ from enum import Enum
                     'class_name': get_class_name(key, js, parent),
                     'props': [enum_value(value) for value in enum_values],
                     'inits':
-                    [init_func(k, v) for k, v in js.properties.items()]
+                    [init_func(k, v, js) for k, v in js.properties.items()]
                 }
                 w.write(PYTHON_ENUM.render(**value_map))
 
@@ -151,7 +154,7 @@ from enum import Enum
                       f'{k}: {type_with_default(js_to_pythontype(k, v, js))}')
                      for k, v in js.properties.items()],
                     'inits':
-                    [init_func(k, v) for k, v in js.properties.items()]
+                    [init_func(k, v, js) for k, v in js.properties.items()]
                 }
                 w.write(PYTHON_CLASS.render(**value_map))
 
