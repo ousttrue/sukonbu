@@ -9,9 +9,9 @@ However, JSON Schema can skip unnecessary object properties, which are manipulat
 
 So I made this.
 
-* generate serialized containers(Force all fields to be nullable)
+* generate serialized containers(Force all object properties to be nullable)
 * generate deserializer for that containers
-* generate serializer(Skip unnecessary object properties) for that containers.
+* generate serializer for that containers(Skip unnecessary object properties)
 
 ## ToDo
 
