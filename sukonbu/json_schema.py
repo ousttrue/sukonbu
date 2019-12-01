@@ -31,8 +31,7 @@ class JsonSchema(NamedTuple):
     dependencies: List[Any] = []
     required: List[Any] = []
 
-    def title_or_type(self):
-        value = f'{self.title}({self.type})' if self.title else self.type
+    def get_enum_values(self) -> List[Any]:
         if self.anyOf:
 
             def enum_value(value):
@@ -41,9 +40,17 @@ class JsonSchema(NamedTuple):
                 else:
                     return f'{value["description"]}={value["enum"][0]}'
 
-            enum_values = [
+            return [
                 enum_value(value) for value in self.anyOf if 'enum' in value
             ]
+
+        return []
+
+    def title_or_type(self):
+        value = f'{self.title}({self.type})' if self.title else self.type
+
+        enum_values = self.get_enum_values()
+        if enum_values:
             value = f'enum {value} {{' + ', '.join(enum_values) + '}'
         # if self.path:
         #     value += ': ' + self.path.name
