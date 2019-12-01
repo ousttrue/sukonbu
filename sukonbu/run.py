@@ -4,6 +4,7 @@ import json
 import io
 from typing import NamedTuple, Any, List, Dict, Optional, TextIO
 from .json_schema_parser import JsonSchemaParser
+from .generators import py
 import argparse
 
 
@@ -24,7 +25,7 @@ def main():
     js_parser.process(pathlib.Path(path))
 
     if args.dst:
-        js_parser.generate(pathlib.Path(args.dst))
+        py.generate(js_parser, pathlib.Path(args.dst))
 
     else:
         js_parser.print()
