@@ -48,11 +48,101 @@ class {{ class_name }}(NamedTuple):
 ''')
 
 
+def get_class_name(name: str, js: JsonSchema,
+                   parent: Optional[JsonSchema]) -> str:
+    if parent and js.get_enum_values():
+        return parent.get_class_name() + name[0:1].upper() + name[1:]
+    else:
+        return js.get_class_name()
+
+
+def js_to_pythontype(name: str, js: JsonSchema,
+                     parent: JsonSchema) -> Tuple[str, str]:
+    if js.title == 'Extension':
+        return 'dict', '{}'
+
+    enum_values = js.get_enum_values()
+    if enum_values:
+        default = js.default
+        cls_name = get_class_name(name, js, parent)
+        if js.type == 'string' and default:
+            default = f'"{default}"'
+        if default:
+            default = f'{cls_name}({default})'
+        return cls_name, default
+
+    if js.type == 'integer':
+        return 'int', '0'
+    if js.type == 'number':
+        return 'float', '0.0'
+    elif js.type == 'boolean':
+        return 'bool', 'False'
+    elif js.type == 'string':
+        return 'str', "''"
+    elif js.type == 'object':
+        if js.properties:
+            name = js.get_class_name()
+            return name, f'{name}()'
+        return 'dict', '{}'
+    elif js.type == 'array':
+        return f'List[{js_to_pythontype(name, js.items, js)[0]}]', '[]'
+    elif js.type == 'unknown':
+        return 'dict', '{}'
+    else:
+        return js.type, 'None'
+
+
+def type_with_default(src: Tuple[str, str]) -> str:
+    return f'{src[0]} = {src[1]}'
+
+
+def read_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
+    if js.get_enum_values():
+        return f'if "{name}" in src: src["{name}"] = {get_class_name(name, js, parent)}(src["{name}"]) # noqa'
+
+    if js.properties:
+        return f'if "{name}" in src: src["{name}"] = {js.get_class_name()}.from_dict(src["{name}"]) # noqa'
+
+    if js.type == 'array' and js.items.properties:
+        return f'if "{name}" in src: src["{name}"] = [{js.items.get_class_name()}.from_dict(item) for item in src["{name}"]] # noqa'
+
+    return f'# {name} do nothing'
+    # return f'src["{name}]'
+
+
+def write_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
+    condition = f'if self.{name} is not None: '
+
+    if js.properties or js.get_enum_values():
+        return f'{condition}d["{name}"] = self.{name}.to_dict() # noqa'
+
+    if js.type == 'array' and js.items.properties:
+        return f'{condition}d["{name}"] = [item.to_dict() for item in self.{name}] # noqa'
+
+    return f'{condition}d["{name}"] = self.{name} # noqa'
+
+
+def escape_enum(src: str) -> str:
+    splitted = src.split('/')
+    if len(splitted) > 1:
+        return ''.join(x.title() for x in splitted)
+    else:
+        return src
+
+
+def enum_value(src: str) -> str:
+    splitted = src.split('=')
+    if len(splitted) == 2:
+        return f'{escape_enum(splitted[0])} = {splitted[1]}'
+    else:
+        return f'{escape_enum(splitted[0])} = "{splitted[0]}"'
+
+
 def generate(self: JsonSchemaParser, dst: pathlib.Path) -> None:
     if not self.root:
         return
 
-    used = []
+    used: List[JsonSchema] = []
     schemas: List[Tuple[str, JsonSchema, Optional[JsonSchema]]] = []
 
     def traverse(name: str, js: JsonSchema, parent: Optional[JsonSchema]):
@@ -65,91 +155,6 @@ def generate(self: JsonSchemaParser, dst: pathlib.Path) -> None:
             used.append(js)
 
     traverse('', self.root, None)
-
-    def get_class_name(name: str, js: JsonSchema,
-                       parent: Optional[JsonSchema]) -> str:
-        if parent and js.get_enum_values():
-            return parent.get_class_name() + name[0:1].upper() + name[1:]
-        else:
-            return js.get_class_name()
-
-    def js_to_pythontype(name: str, js: JsonSchema,
-                         parent: JsonSchema) -> Tuple[str, str]:
-        if js.title == 'Extension':
-            return 'dict', '{}'
-
-        enum_values = js.get_enum_values()
-        if enum_values:
-            default = js.default
-            cls_name = get_class_name(name, js, parent)
-            if js.type == 'string' and default:
-                default = f'"{default}"'
-            if default:
-                default = f'{cls_name}({default})'
-            return cls_name, default
-
-        if js.type == 'integer':
-            return 'int', '0'
-        if js.type == 'number':
-            return 'float', '0.0'
-        elif js.type == 'boolean':
-            return 'bool', 'False'
-        elif js.type == 'string':
-            return 'str', "''"
-        elif js.type == 'object':
-            if js.properties:
-                name = js.get_class_name()
-                return name, f'{name}()'
-            return 'dict', '{}'
-        elif js.type == 'array':
-            return f'List[{js_to_pythontype(name, js.items, js)[0]}]', '[]'
-        elif js.type == 'unknown':
-            return 'dict', '{}'
-        else:
-            return js.type, 'None'
-
-    def type_with_default(src: Tuple[str, str]) -> str:
-        return f'{src[0]} = {src[1]}'
-
-    def read_func(name: str, js: JsonSchema,
-                  parent: Optional[JsonSchema]) -> str:
-        if js.get_enum_values():
-            return f'if "{name}" in src: src["{name}"] = {get_class_name(name, js, parent)}(src["{name}"]) # noqa'
-
-        if js.properties:
-            return f'if "{name}" in src: src["{name}"] = {js.get_class_name()}.from_dict(src["{name}"]) # noqa'
-
-        if js.type == 'array' and js.items.properties:
-            return f'if "{name}" in src: src["{name}"] = [{js.items.get_class_name()}.from_dict(item) for item in src["{name}"]] # noqa'
-
-        return f'# {name} do nothing'
-        # return f'src["{name}]'
-
-    def write_func(name: str, js: JsonSchema,
-                   parent: Optional[JsonSchema]) -> str:
-        condition = f'if self.{name} is not None: '
-
-        if js.properties or js.get_enum_values():
-            return f'{condition}d["{name}"] = self.{name}.to_dict() # noqa'
-
-        if js.type == 'array' and js.items.properties:
-            return f'{condition}d["{name}"] = [item.to_dict() for item in self.{name}] # noqa'
-
-        return f'{condition}d["{name}"] = self.{name} # noqa'
-
-    def escape_enum(src: str) -> str:
-        splitted = src.split('/')
-        if len(splitted) > 1:
-            return ''.join(x.title() for x in splitted)
-        else:
-            return src
-
-    def enum_value(src: str) -> str:
-        splitted = src.split('=')
-        if len(splitted) == 2:
-            return f'{escape_enum(splitted[0])} = {splitted[1]}'
-        else:
-            return f'{escape_enum(splitted[0])} = "{splitted[0]}"'
 
     print(f'write: {dst}')
     with dst.open('w') as w:
