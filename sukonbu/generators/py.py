@@ -133,8 +133,10 @@ def write_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
     if js.properties or js.get_enum_values():
         return f'{condition}d["{name}"] = self.{name}.to_dict() # noqa'
 
-    if js.type == 'array' and js.items.properties:
-        return f'{condition}d["{name}"] = [item.to_dict() for item in self.{name}] # noqa'
+    if js.type == 'array':
+        condition = f'if self.{name}: '
+        if js.items.properties:
+            return f'{condition}d["{name}"] = [item.to_dict() for item in self.{name}] # noqa'
 
     return f'{condition}d["{name}"] = self.{name} # noqa'
 
