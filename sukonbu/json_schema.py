@@ -65,4 +65,7 @@ class JsonSchema(NamedTuple):
             return self.title_or_type()
 
     def get_class_name(self):
-        return self.title.replace(' ', '')
+        if self.properties:
+            return self.title.replace(' ', '')
+        else:
+            return self.type
