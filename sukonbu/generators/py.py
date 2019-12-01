@@ -51,6 +51,7 @@ class {{ class_name }}(NamedTuple):
 def get_class_name(name: str, js: JsonSchema,
                    parent: Optional[JsonSchema]) -> str:
     if parent and js.get_enum_values():
+        # enum
         return parent.get_class_name() + name[0:1].upper() + name[1:]
     else:
         return js.get_class_name()
@@ -72,13 +73,7 @@ def js_to_pythontype(name: str, js: JsonSchema, parent: JsonSchema) -> str:
 
     enum_values = js.get_enum_values()
     if enum_values:
-        # default = js.default
-        cls_name = get_class_name(name, js, parent)
-        # if js.type == 'string' and default:
-        #     default = f'"{default}"'
-        # if default:
-        #     default = f'{cls_name}({default})'
-        return f'{cls_name}'
+        return get_class_name(name, js, parent)
 
     if js.type == 'integer':
         return 'int'
@@ -116,17 +111,20 @@ def type_with_default(src: str) -> str:
 
 
 def read_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
+    '''
+    replace Enum and Object values
+    '''
     if js.get_enum_values():
         return f'if "{name}" in src: src["{name}"] = {get_class_name(name, js, parent)}(src["{name}"]) # noqa'
 
     if js.properties:
+        # object
         return f'if "{name}" in src: src["{name}"] = {js.get_class_name()}.from_dict(src["{name}"]) # noqa'
 
     if js.type == 'array' and js.items.properties:
         return f'if "{name}" in src: src["{name}"] = [{js.items.get_class_name()}.from_dict(item) for item in src["{name}"]] # noqa'
 
     return f'# {name} do nothing'
-    # return f'src["{name}]'
 
 
 def write_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
@@ -144,6 +142,7 @@ def write_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
 def escape_enum(src: str) -> str:
     splitted = src.split('/')
     if len(splitted) > 1:
+        # ex. image/jpg
         return ''.join(x.title() for x in splitted)
     else:
         return src
@@ -152,8 +151,10 @@ def escape_enum(src: str) -> str:
 def enum_value(src: str) -> str:
     splitted = src.split('=')
     if len(splitted) == 2:
+        # int
         return f'{escape_enum(splitted[0])} = {splitted[1]}'
     else:
+        # str
         return f'{escape_enum(splitted[0])} = "{splitted[0]}"'
 
 
