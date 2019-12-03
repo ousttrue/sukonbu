@@ -31,8 +31,8 @@ class {{ class_name }}(NamedTuple):
     {{ prop[1] }}
 {%- endfor %}
 
-    def to_dict(self) -> dict:
-        d = {}
+    def to_dict(self) -> Dict[str, Any]:
+        d: Dict[str, Any] = {}
 {%- for write in writes %}
         {{ write }}
 {%- endfor %}
@@ -101,18 +101,21 @@ def js_to_pythontype(name: str, js: JsonSchema, parent: JsonSchema) -> str:
         # return js.type, 'None'
 
 
-def type_with_default(src: str) -> str:
-    # if src.startswith('Dict['):
-    #     return f'{src} = {{}}'
-    # elif src.startswith('List['):
-    #     return f'{src} = []'
-    # else:
-    return f'Optional[{src}] = None'
+def add_optional(src: str, required: bool) -> str:
+    if required:
+        return f'{src}'
+
+    if src.startswith('Dict['):
+        return f'{src}'
+    elif src.startswith('List['):
+        return f'{src}'
+    else:
+        return f'Optional[{src}] = None'
 
 
 def read_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
     '''
-    replace Enum and Object values
+    from_dict
     '''
     if js.get_enum_values():
         return f'if "{name}" in src: src["{name}"] = {get_class_name(name, js, parent)}(src["{name}"]) # noqa'
@@ -121,13 +124,22 @@ def read_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
         # object
         return f'if "{name}" in src: src["{name}"] = {js.get_class_name()}.from_dict(src["{name}"]) # noqa'
 
-    if js.type == 'array' and js.items.properties:
-        return f'if "{name}" in src: src["{name}"] = [{js.items.get_class_name()}.from_dict(item) for item in src["{name}"]] # noqa'
+    if js.additionalProperties or js.type == 'unknown':
+        return f'if ("{name}" not in src): src["{name}"] = {{}} # noqa'
+
+    if js.type == 'array':
+        if js.items.properties:
+            return f'src["{name}"] = [{js.items.get_class_name()}.from_dict(item) for item in src["{name}"]] if "{name}" in src else [] # noqa'
+        else:
+            return f'if ("{name}" not in src): src["{name}"] = [] # noqa'
 
     return f'# {name} do nothing'
 
 
 def write_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
+    '''
+    to_dict
+    '''
     condition = f'if self.{name} is not None: '
 
     if js.properties or js.get_enum_values():
@@ -198,13 +210,15 @@ from enum import Enum
                 w.write(PYTHON_ENUM.render(**value_map))
 
             elif js.properties:
+                props = [(
+                    v.description,
+                    f'{k}: {add_optional(js_to_pythontype(k, v, js), k in js.required)}'
+                ) for k, v in js.properties.items()]
                 value_map = {
                     'class_name':
                     js.get_class_name(),
                     'props':
-                    [(v.description,
-                      f'{k}: {type_with_default(js_to_pythontype(k, v, js))}')
-                     for k, v in js.properties.items()],
+                    sorted(props, key=lambda x: '=' in x[1]),
                     'writes':
                     [write_func(k, v, js) for k, v in js.properties.items()],
                     'reads':
