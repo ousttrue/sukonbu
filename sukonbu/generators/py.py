@@ -105,12 +105,12 @@ def add_optional(src: str, required: bool) -> str:
     if required:
         return f'{src}'
 
-    if src.startswith('Dict['):
-        return f'{src}'
-    elif src.startswith('List['):
-        return f'{src}'
-    else:
-        return f'Optional[{src}] = None'
+    # if src.startswith('Dict['):
+    #     return f'{src}'
+    # elif src.startswith('List['):
+    #     return f'{src}'
+    # else:
+    return f'Optional[{src}] = None'
 
 
 def read_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
