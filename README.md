@@ -15,14 +15,16 @@ So I made this.
 
 ## ToDo
 
-* [ ] WIP python generator
+* [x] python generator
 * [ ] C# generator
-* [ ] D generator
+* [ ] (WIP) generator
 * [ ] C++ generator
 
 ## Usage
 
-TODO:
+```
+$ python -m sukonbu.cli PATH_TO_GLTF_JSON --lang python --dst PATH_TO_GENERATE_DIR
+```
 
 ## examples
 
