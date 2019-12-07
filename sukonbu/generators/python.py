@@ -48,13 +48,8 @@ class {{ class_name }}(NamedTuple):
 ''')
 
 
-def get_class_name(name: str, js: JsonSchema,
-                   parent: Optional[JsonSchema]) -> str:
-    if parent and js.get_enum_values():
-        # enum
-        return parent.get_class_name() + name[0:1].upper() + name[1:]
-    else:
-        return js.get_class_name()
+def get_enum_name(name: str, js: JsonSchema, parent: JsonSchema) -> str:
+    return parent.get_class_name() + name[0:1].upper() + name[1:]
 
 
 def js_to_pythontype(name: str, js: JsonSchema, parent: JsonSchema) -> str:
@@ -73,7 +68,7 @@ def js_to_pythontype(name: str, js: JsonSchema, parent: JsonSchema) -> str:
 
     enum_values = js.get_enum_values()
     if enum_values:
-        return get_class_name(name, js, parent)
+        return get_enum_name(name, js, parent)
 
     if js.type == 'integer':
         return 'int'
@@ -118,7 +113,7 @@ def read_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
     from_dict
     '''
     if js.get_enum_values():
-        return f'if "{name}" in src: src["{name}"] = {get_class_name(name, js, parent)}(src["{name}"]) # noqa'
+        return f'if "{name}" in src: src["{name}"] = {js.get_class_name()}(src["{name}"]) # noqa'
 
     if js.properties:
         # object
@@ -200,9 +195,11 @@ from enum import Enum
         for key, js, parent in schemas:
             enum_values = js.get_enum_values()
             if enum_values:
+                if not parent:
+                    raise Exception()
                 value_map = {
                     'class_name':
-                    get_class_name(key, js, parent),
+                    get_enum_name(key, js, parent),
                     'props': [enum_value(value) for value in enum_values],
                     'reads':
                     [read_func(k, v, js) for k, v in js.properties.items()]
