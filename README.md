@@ -16,14 +16,15 @@ So I made this.
 ## ToDo
 
 * [x] python generator
+* [WIP] D generator
 * [ ] C# generator
-* [ ] (WIP) generator
 * [ ] C++ generator
+* [ ] manipulate Extensions and Extras
 
 ## Usage
 
 ```
-$ python -m sukonbu.cli PATH_TO_GLTF_JSON --lang python --dst PATH_TO_GENERATE_DIR
+$ python -m sukonbu.cli PATH_TO_GLTF_JSONSCHEMA --lang python --dst PATH_TO_GENERATE_FILE
 ```
 
 ## examples
