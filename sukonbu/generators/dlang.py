@@ -26,12 +26,13 @@ class {{ class_name }}
 ''')
 
 
+
 def js_to_dlang_type(name: str, js: JsonSchema, parent: JsonSchema) -> str:
     '''
     convert JsonSchema to dlang type
     '''
-    if js.title == 'Extension':
-        return 'Object[string]'
+    if js.title in ['Extension', 'Extras']:
+        return js.get_class_name()
 
     enum_values = js.get_enum_values()
     if enum_values:
@@ -87,13 +88,9 @@ def enum_value(src: str) -> str:
 
 
 def add_optional(src: str, required: bool) -> str:
-    if required:
-        return f'{src}'
     if src in ['int', 'bool', 'float']:
-        return f'{src}'
-    if '[' in src:
-        return f'{src}'
-    return f'Nullable!{src}'
+        return f'Nullable!{src}'
+    return f'{src}'
 
 
 def read_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
@@ -151,6 +148,17 @@ import std.typecons;
                     'props': [enum_value(value) for value in enum_values],
                 }
                 w.write(DLANG_ENUM.render(**value_map))
+
+            elif js.title in ['Extension', 'Extras']:
+                if not parent:
+                    raise Exception()
+                value_map = {
+                    'class_name': js.get_class_name(),
+                    'props': [],
+                    'writes': [],
+                    'reads': [],
+                }
+                w.write(DLANG_CLASS.render(**value_map))
 
             elif js.properties:
                 props = [(

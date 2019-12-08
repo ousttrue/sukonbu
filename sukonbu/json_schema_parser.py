@@ -14,7 +14,11 @@ class JsonSchemaParser:
         '''
         replace dict to JsonSchema by depth first
         '''
-        def traverse(node: dict):
+        def traverse(node: dict, parent: Optional[dict] = None):
+            if parent and 'title' in node and node['title'] in ['Extension', 'Extras']:
+                node['type'] = parent['title'].replace(' ', '') + node['title']
+                return JsonSchema(**node)
+
             path = node.get('path')
             if path:
                 if path in self.schema_map:
@@ -24,17 +28,18 @@ class JsonSchemaParser:
             props = node.get('properties')
             if props:
                 node['properties'] = {
-                    key: traverse(prop)
+                    key: traverse(prop, node)
                     for key, prop in props.items()
                 }
 
             items = node.get('items')
             if items:
-                node['items'] = traverse(items)
+                node['items'] = traverse(items, node)
 
             additionalProperties = node.get('additionalProperties')
             if additionalProperties:
-                node['additionalProperties'] = traverse(additionalProperties)
+                node['additionalProperties'] = traverse(
+                    additionalProperties, node)
 
             js = JsonSchema(**node)
             if path:
