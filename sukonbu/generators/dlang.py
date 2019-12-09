@@ -101,20 +101,6 @@ def add_optional(src: str, required: bool) -> str:
     return f'{src}'
 
 
-def read_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
-    '''
-    from_dict
-    '''
-    return ''
-
-
-def write_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
-    '''
-    to_dict
-    '''
-    return ''
-
-
 def escape_symbol(name: str) -> str:
     if name in ['version']:
         return name + '_'
@@ -137,6 +123,11 @@ def read_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
     if js.properties:
         # object
         return f'if(const(JSONValue)* x = "{name}" in src){{ value.{escape_symbol(name)} = {js.get_class_name()}.fromJSON(src["{name}"]); }}'
+
+    if js.additionalProperties:
+        # assocArray
+        if js.additionalProperties.type == 'integer':
+            return f'if(const(JSONValue)* x = "{name}" in src){{ value.{escape_symbol(name)} = x.object.byPair.map!(kv => tuple(kv.key, cast(int)kv.value.integer)).assocArray; }}'
 
     if js.type == 'array':
         items = js.items
@@ -170,6 +161,13 @@ def read_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
     return f'// not implemented: {js.type}'
 
 
+def write_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
+    '''
+    to_dict
+    '''
+    return ''
+
+
 def generate(parser: JsonSchemaParser, dst: pathlib.Path) -> None:
     if not parser.root:
         return
@@ -200,7 +198,7 @@ import std.array;
 
 float asFloat(const JSONValue value)
 {
-    return asFloat(&value); 
+    return asFloat(&value);
 }
 float asFloat(const JSONValue* value)
 {
