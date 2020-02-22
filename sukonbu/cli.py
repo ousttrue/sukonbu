@@ -4,7 +4,7 @@ import json
 import io
 from typing import NamedTuple, Any, List, Dict, Optional, TextIO
 from sukonbu.json_schema_parser import JsonSchemaParser
-from sukonbu.generators import python, dlang
+from sukonbu.generators import python, dlang, cpp
 import argparse
 
 
@@ -16,7 +16,7 @@ def main():
     parser.add_argument('json', help='target json file.')
     parser.add_argument('--lang',
                         default='python',
-                        choices=['python', 'dlang'],
+                        choices=['python', 'dlang', 'cpp'],
                         help='generate language.')
     parser.add_argument('--dst', help='output directory.')
     args = parser.parse_args()
@@ -36,8 +36,12 @@ def main():
         dst = pathlib.Path(args.dst)
         if args.lang == 'python':
             python.generate(js_parser, dst)
-        else:
+        elif args.lang == 'dlang':
             dlang.generate(js_parser, dst)
+        elif args.lang == 'cpp':
+            cpp.generate(js_parser, dst)
+        else:
+            raise NotImplementedError(args.lang)
 
     else:
         js_parser.print()

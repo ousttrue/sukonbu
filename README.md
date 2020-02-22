@@ -18,7 +18,7 @@ So I made this.
 * [x] python generator
 * [ ] (WIP)D generator
 * [ ] C# generator
-* [ ] C++ generator
+* [ ] (WIP)C++ generator
 * [ ] manipulate Extensions and Extras
 
 ## Usage
