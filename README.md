@@ -16,7 +16,7 @@ So I made this.
 ## ToDo
 
 * [x] python generator
-* [WIP] D generator
+* [ ] (WIP)D generator
 * [ ] C# generator
 * [ ] C++ generator
 * [ ] manipulate Extensions and Extras

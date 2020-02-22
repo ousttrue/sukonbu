@@ -78,7 +78,11 @@ def js_to_pythontype(name: str, js: JsonSchema, parent: JsonSchema) -> str:
         return 'bool'
     elif js.type == 'string':
         return 'str'
-    elif js.type == 'object':
+    elif js.type == 'array':
+        return f'List[{js_to_pythontype(name, js.items, js)}]'
+    elif js.type == 'unknown':
+        return 'Dict[str, Any]'
+    else: # js.type == 'object' or else
         if js.properties and js.additionalProperties:
             raise Exception()
         if js.properties:
@@ -87,13 +91,6 @@ def js_to_pythontype(name: str, js: JsonSchema, parent: JsonSchema) -> str:
             return f'Dict[str, {js_to_pythontype(name, js.additionalProperties, js)}]'
         else:
             return 'Dict[str, Any]'
-    elif js.type == 'array':
-        return f'List[{js_to_pythontype(name, js.items, js)}]'
-    elif js.type == 'unknown':
-        return 'Dict[str, Any]'
-    else:
-        raise Exception()
-        # return js.type, 'None'
 
 
 def add_optional(src: str, required: bool) -> str:
