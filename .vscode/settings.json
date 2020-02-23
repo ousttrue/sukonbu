@@ -8,7 +8,6 @@
     "python.linting.mypyEnabled": true,
     "python.linting.enabled": true,
     "python.envFile": "${workspaceFolder}/.env",
-    "cmake.sourceDirectory": "${workspaceFolder}/cpp_user",
     "files.associations": {
         "optional": "cpp"
     }

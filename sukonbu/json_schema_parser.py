@@ -21,7 +21,7 @@ class JsonSchemaParser:
         '''
         replace dict to JsonSchema by depth first
         '''
-        def traverse(node: dict, parent: Optional[dict] = None, key: str = None) -> JsonSchema:
+        def traverse(node: dict, parent: Optional[dict] = None, key: Optional[str] = None) -> JsonSchema:
             if parent and 'title' in node and node['title'] in [
                     'Extension', 'Extras'
             ]:
@@ -52,7 +52,7 @@ class JsonSchemaParser:
                 node['additionalProperties'] = traverse(
                     additionalProperties, node)
 
-            if node.get('anyOf'):
+            if node.get('anyOf') and parent and key:
                 # enum
                 node['title'] = parent['title'].replace(
                     ' ', '') + key[0:1].upper() + key[1:]

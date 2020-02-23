@@ -56,14 +56,14 @@ def js_to_cpp_type(name: str, js: JsonSchema, parent: JsonSchema) -> str:
     elif js.type == 'boolean':
         return 'bool'
     elif js.type == 'string':
-        return 'std::u8string'
+        return 'std::string'
     elif js.type == 'object':
         if js.properties and js.additionalProperties:
             raise Exception()
         if js.properties:
             return js.get_class_name()
         elif js.additionalProperties:
-            return f'std::unordered_map<std::u8string, {js_to_cpp_type(name, js.additionalProperties, js)}>'
+            return f'std::unordered_map<std::string, {js_to_cpp_type(name, js.additionalProperties, js)}>'
         else:
             return 'Object[string]'
     elif js.type == 'array':
@@ -94,17 +94,33 @@ def enum_value(src: str) -> str:
         return f'{escape_enum(splitted[0])} /* = "{splitted[0]}" */'
 
 
+def enum_read_func(js: JsonSchema) -> str:
+    if js.type == 'integer':
+        return f'p = ({js.title})j.get<int>();'
+    elif js.type == 'string':
+        func = f'auto value = j.get<std::string>();'
+        for enum_value in js.get_enum_values():
+            func += f'\n    if(value=="{enum_value}")p = {js.title}::{escape_enum(enum_value)};'
+        return func
+    else:
+        raise NotImplementedError()
+
+
 def add_optional(js: JsonSchema, src: str, required: bool) -> str:
+    if js.type == 'string' and js.get_enum_values():
+        return f'std::optional<{src}>'
+
     if js.type in ['string', 'array', 'enum']:
         return f'{src}'
+    if js.type == 'object':
+        if js.additionalProperties:
+            return f'{src}'
+
     return f'std::optional<{src}>'
 
 
 def escape_symbol(name: str) -> str:
-    if name in ['version']:
-        return name + '_'
-    else:
-        return name
+    return name
 
 
 def read_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
@@ -112,53 +128,13 @@ def read_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
     fromJSON
     '''
 
-    if js.get_enum_values():
-        if not parent:
-            raise Exception()
-        if js.type == 'string':
-            return f'if(const(JSONValue)* x = "{name}" in src){{ value.{escape_symbol(name)} = to!{js.title}(x.str); }}'
-        else:
-            return f'if(const(JSONValue)* x = "{name}" in src){{ value.{escape_symbol(name)} = cast({js.title})x.integer; }}'
+    # if js.type in ['array', 'string']:
+    #     return f'if(j.find("{name}")!=j.end()) j.at("{name}").get_to(p.{escape_symbol(name)});'
 
-    if js.properties:
-        # object
-        return f'if(const(JSONValue)* x = "{name}" in src){{ value.{escape_symbol(name)} = {js.get_class_name()}.fromJSON(src["{name}"]); }}'
+    # if js.type == 'object' and js.additionalProperties:
+    #     return f'if(j.find("{name}")!=j.end()) j.at("{name}").get_to(p.{escape_symbol(name)});'
 
-    if js.additionalProperties:
-        # assocArray
-        if js.additionalProperties.type == 'integer':
-            return f'if(const(JSONValue)* x = "{name}" in src){{ value.{escape_symbol(name)} = x.object.byPair.map!(kv => tuple(kv.key, cast(int)kv.value.integer)).assocArray; }}'
-
-    if js.type == 'array':
-        items = js.items
-        if items.properties:
-            return f'if(const(JSONValue)* x = "{name}" in src){{ value.{escape_symbol(name)} = x.array.map!(a => {items.get_class_name()}.fromJSON(a)).array; }}'
-        else:
-            if items.type == 'integer':
-                # must range to array
-                # https://stackoverflow.com/questions/13125446/converting-string-to-char?rq=1
-                return f'if(const(JSONValue)* x = "{name}" in src){{ value.{escape_symbol(name)} = x.array.map!(a => cast(int)a.integer).array; }}'
-            elif items.type == 'number':
-                return f'if(const(JSONValue)* x = "{name}" in src){{ value.{escape_symbol(name)} = x.array.map!(a => a.asFloat).array; }}'
-            elif items.type == 'string':
-                return f'if(const(JSONValue)* x = "{name}" in src){{ value.{escape_symbol(name)} = x.array.map!(a => a.str).array; }}'
-            elif items.additionalProperties:
-                if items.additionalProperties.type == 'integer':
-                    return f'if(const(JSONValue)* x = "{name}" in src){{ value.{escape_symbol(name)} = x.array.map!(a => a.object.byPair.map!(kv => tuple(kv.key, cast(int)kv.value.integer)).assocArray).array; }}'
-
-                else:
-                    raise NotImplementedError()
-
-    if js.type == 'integer':
-        return f'if(const(JSONValue)* x = "{name}" in src){{ value.{escape_symbol(name)} = nullable(cast(int)x.integer); }}'
-    elif js.type == 'number':
-        return f'if(const(JSONValue)* x = "{name}" in src){{ value.{escape_symbol(name)} = nullable(x.asFloat); }}'
-    elif js.type == 'string':
-        return f'if(const(JSONValue)* x = "{name}" in src){{ value.{escape_symbol(name)} = x.str; }}'
-    elif js.type == 'boolean':
-        return f'if(const(JSONValue)* x = "{name}" in src){{ value.{escape_symbol(name)} = x.boolean; }}'
-
-    return f'// not implemented: {js.type}'
+    return f'if(j.find("{name}")!=j.end()) j.at("{name}").get_to(p.{escape_symbol(name)});'
 
 
 def write_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
@@ -166,6 +142,56 @@ def write_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
     to_dict
     '''
     return ''
+
+
+NLOHMANN_BEGIN = '''// this is generated by sukonbu
+#include "sukonbu_gltf.h"
+#include <nlohmann/json.hpp>
+
+// partial specialization (full specialization works too)
+namespace nlohmann
+{
+template <typename T>
+struct adl_serializer<std::optional<T>>
+{
+    static void to_json(json &j, const std::optional<T> &opt)
+    {
+        if (opt.has_value())
+        {
+            j = *opt;
+        }
+    }
+    static void from_json(const json &j, std::optional<T> &opt)
+    {
+        if (!j.is_null())
+        {
+            opt = j.get<T>();                               
+        }
+    }
+};
+} // namespace nlohmann
+
+namespace sukonbu {
+using nlohmann::json;
+
+'''
+
+NLOHMANN_END = '''} // namespace sukonbu
+'''
+
+NLOHMANN_SERIALIZATION = Template('''
+void to_json(json& j, const {{ class_name}} & p) {
+{%- for write in writes %}
+    {{ write }}
+{%- endfor %}
+}
+void from_json(const json& j, {{ class_name }}& p) {
+{%- for read in reads %}
+    {{ read }}
+{%- endfor %}
+}
+
+''')
 
 
 def generate(parser: JsonSchemaParser, dst: pathlib.Path) -> None:
@@ -215,3 +241,52 @@ def generate(parser: JsonSchemaParser, dst: pathlib.Path) -> None:
                 w.write(CPP_CLASS.render(**value_map))
 
         w.write(CPP_END)
+
+    nlohmann_json = dst.parent / (dst.stem + '_nlohmann-json.h')
+    with nlohmann_json.open('w') as w:
+        w.write(NLOHMANN_BEGIN)
+
+        for key, js, parent in parser.schemas:
+            enum_values = js.get_enum_values()
+            if enum_values:
+                if not parent:
+                    raise Exception()
+                value_map = {
+                    'class_name': js.title,
+                    'props': [enum_value(value) for value in enum_values],
+                    'writes': [],
+                    'reads': [enum_read_func(js)]
+                }
+                w.write(NLOHMANN_SERIALIZATION.render(**value_map))
+
+            elif js.title in ['Extension', 'Extras']:
+                if not parent:
+                    raise Exception()
+                value_map = {
+                    'class_name': js.get_class_name(),
+                    'props': [],
+                    'writes': [],
+                    'reads': [],
+                }
+                w.write(NLOHMANN_SERIALIZATION.render(**value_map))
+
+            elif js.properties:
+                props = [(
+                    v.description,
+                    f'{add_optional(v, js_to_cpp_type(k, v, js), k in js.required)} {escape_symbol(k)}'
+                ) for k, v in js.properties.items()]
+                value_map = {
+                    'class_name':
+                    js.get_class_name(),
+                    'props':
+                    sorted(props, key=lambda x: '=' in x[1]),
+                    'writes':
+                    [write_func(k, v, js) for k, v in js.properties.items()],
+                    'reads':
+                    [read_func(k, v, js) for k, v in js.properties.items()]
+                }
+                w.write(NLOHMANN_SERIALIZATION.render(**value_map))
+
+        w.write(NLOHMANN_END)
+
+    print(f'write: {nlohmann_json}')

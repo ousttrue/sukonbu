@@ -3,20 +3,21 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/cpp_user/**"
+                "${workspaceFolder}/nlohmann-json/include",
+                "${workspaceFolder}/catch2/single_include",
+                "${workspaceFolder}/../generated/cpp"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "_UNICODE"
+                "_UNICODE",
+                "WIN32_LEAN_AND_MEAN"
             ],
             "windowsSdkVersion": "10.0.18362.0",
             "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.24.28314/bin/Hostx64/x64/cl.exe",
             "cStandard": "c11",
             "cppStandard": "c++20",
-            "intelliSenseMode": "msvc-x64",
-            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
-            "configurationProvider": "vector-of-bool.cmake-tools"
+            "intelliSenseMode": "msvc-x64"
         }
     ],
     "version": 4

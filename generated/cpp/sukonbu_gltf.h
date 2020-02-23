@@ -119,7 +119,7 @@ struct Accessor
     // The number of attributes referenced by this accessor.
     std::optional<int> count;
     // Specifies if the attribute is a scalar, vector, or matrix.
-    AccessorType type;
+    std::optional<AccessorType> type;
     // Maximum value of each component in this attribute.
     std::vector<float> max;
     // Minimum value of each component in this attribute.
@@ -127,7 +127,7 @@ struct Accessor
     // Sparse storage of attributes that deviate from their initialization value.
     std::optional<AccessorSparse> sparse;
     // The user-defined name of this object.
-    std::u8string name;
+    std::string name;
     // Dictionary object with extension-specific objects.
     std::optional<AccessorExtension> extensions;
     // Application-specific data.
@@ -155,7 +155,7 @@ struct AnimationChannelTarget
     // The index of the bufferView.
     std::optional<int> node;
     // The name of the node's TRS property to modify, or the "weights" of the Morph Targets it instantiates. For the "translation" property, the values that are provided by the sampler are the translation along the x, y, and z axes. For the "rotation" property, the values are a quaternion in the order (x, y, z, w), where w is the scalar. For the "scale" property, the values are the scaling factors along the x, y, and z axes.
-    AnimationChannelTargetPath path;
+    std::optional<AnimationChannelTargetPath> path;
     // Dictionary object with extension-specific objects.
     std::optional<AnimationChannelTargetExtension> extensions;
     // Application-specific data.
@@ -202,7 +202,7 @@ struct AnimationSampler
     // The index of the bufferView.
     std::optional<int> input;
     // Interpolation algorithm.
-    AnimationSamplerInterpolation interpolation;
+    std::optional<AnimationSamplerInterpolation> interpolation;
     // The index of the bufferView.
     std::optional<int> output;
     // Dictionary object with extension-specific objects.
@@ -226,7 +226,7 @@ struct Animation
     // An array of samplers that combines input and output accessors with an interpolation algorithm to define a keyframe graph (but not its target).
     std::vector<AnimationSampler> samplers;
     // The user-defined name of this object.
-    std::u8string name;
+    std::string name;
     // Dictionary object with extension-specific objects.
     std::optional<AnimationExtension> extensions;
     // Application-specific data.
@@ -244,13 +244,13 @@ struct AssetExtras
 struct Asset
 {
     // A copyright message suitable for display to credit the content creator.
-    std::u8string copyright;
+    std::string copyright;
     // Tool that generated this glTF model.  Useful for debugging.
-    std::u8string generator;
+    std::string generator;
     // The glTF version that this asset targets.
-    std::u8string version_;
+    std::string version;
     // The minimum glTF version that this asset targets.
-    std::u8string minVersion;
+    std::string minVersion;
     // Dictionary object with extension-specific objects.
     std::optional<AssetExtension> extensions;
     // Application-specific data.
@@ -268,11 +268,11 @@ struct BufferExtras
 struct Buffer
 {
     // The uri of the buffer.
-    std::u8string uri;
+    std::string uri;
     // The length of the buffer in bytes.
     std::optional<int> byteLength;
     // The user-defined name of this object.
-    std::u8string name;
+    std::string name;
     // Dictionary object with extension-specific objects.
     std::optional<BufferExtension> extensions;
     // Application-specific data.
@@ -306,7 +306,7 @@ struct BufferView
     // The target that the GPU buffer should be bound to.
     std::optional<BufferViewTarget> target;
     // The user-defined name of this object.
-    std::u8string name;
+    std::string name;
     // Dictionary object with extension-specific objects.
     std::optional<BufferViewExtension> extensions;
     // Application-specific data.
@@ -382,9 +382,9 @@ struct Camera
     // A perspective camera containing properties to create a perspective projection matrix.
     std::optional<CameraPerspective> perspective;
     // Specifies if the camera uses a perspective or orthographic projection.
-    CameraType type;
+    std::optional<CameraType> type;
     // The user-defined name of this object.
-    std::u8string name;
+    std::string name;
     // Dictionary object with extension-specific objects.
     std::optional<CameraExtension> extensions;
     // Application-specific data.
@@ -408,13 +408,13 @@ struct ImageExtras
 struct Image
 {
     // The uri of the image.
-    std::u8string uri;
+    std::string uri;
     // The image's MIME type. Required if `bufferView` is defined.
-    ImageMimeType mimeType;
+    std::optional<ImageMimeType> mimeType;
     // The index of the bufferView.
     std::optional<int> bufferView;
     // The user-defined name of this object.
-    std::u8string name;
+    std::string name;
     // Dictionary object with extension-specific objects.
     std::optional<ImageExtension> extensions;
     // Application-specific data.
@@ -529,7 +529,7 @@ enum class MaterialAlphaMode
 struct Material
 {
     // The user-defined name of this object.
-    std::u8string name;
+    std::string name;
     // Dictionary object with extension-specific objects.
     std::optional<MaterialExtension> extensions;
     // Application-specific data.
@@ -545,7 +545,7 @@ struct Material
     // The emissive color of the material.
     std::vector<float> emissiveFactor;
     // The alpha rendering mode of the material.
-    MaterialAlphaMode alphaMode;
+    std::optional<MaterialAlphaMode> alphaMode;
     // The alpha cutoff value of the material.
     std::optional<float> alphaCutoff;
     // Specifies whether the material is double sided.
@@ -574,7 +574,7 @@ struct MeshPrimitiveExtras
 struct MeshPrimitive
 {
     // A dictionary object, where each key corresponds to mesh attribute semantic and each value is the index of the accessor containing attribute's data.
-    std::optional<std::unordered_map<std::u8string, int>> attributes;
+    std::unordered_map<std::string, int> attributes;
     // The index of the bufferView.
     std::optional<int> indices;
     // The index of the bufferView.
@@ -582,7 +582,7 @@ struct MeshPrimitive
     // The type of primitives to render.
     std::optional<MeshPrimitiveMode> mode;
     // An array of Morph Targets, each  Morph Target is a dictionary mapping attributes (only `POSITION`, `NORMAL`, and `TANGENT` supported) to their deviations in the Morph Target.
-    std::vector<std::unordered_map<std::u8string, int>> targets;
+    std::vector<std::unordered_map<std::string, int>> targets;
     // Dictionary object with extension-specific objects.
     std::optional<MeshPrimitiveExtension> extensions;
     // Application-specific data.
@@ -604,7 +604,7 @@ struct Mesh
     // Array of weights to be applied to the Morph Targets.
     std::vector<float> weights;
     // The user-defined name of this object.
-    std::u8string name;
+    std::string name;
     // Dictionary object with extension-specific objects.
     std::optional<MeshExtension> extensions;
     // Application-specific data.
@@ -640,7 +640,7 @@ struct Node
     // The weights of the instantiated Morph Target. Number of elements must match number of Morph Targets of used mesh.
     std::vector<float> weights;
     // The user-defined name of this object.
-    std::u8string name;
+    std::string name;
     // Dictionary object with extension-specific objects.
     std::optional<NodeExtension> extensions;
     // Application-specific data.
@@ -696,7 +696,7 @@ struct Sampler
     // t wrapping mode.
     std::optional<SamplerWrapT> wrapT;
     // The user-defined name of this object.
-    std::u8string name;
+    std::string name;
     // Dictionary object with extension-specific objects.
     std::optional<SamplerExtension> extensions;
     // Application-specific data.
@@ -716,7 +716,7 @@ struct Scene
     // The indices of each root node.
     std::vector<int> nodes;
     // The user-defined name of this object.
-    std::u8string name;
+    std::string name;
     // Dictionary object with extension-specific objects.
     std::optional<SceneExtension> extensions;
     // Application-specific data.
@@ -740,7 +740,7 @@ struct Skin
     // Indices of skeleton nodes, used as joints in this skin.
     std::vector<int> joints;
     // The user-defined name of this object.
-    std::u8string name;
+    std::string name;
     // Dictionary object with extension-specific objects.
     std::optional<SkinExtension> extensions;
     // Application-specific data.
@@ -762,7 +762,7 @@ struct Texture
     // The index of the bufferView.
     std::optional<int> source;
     // The user-defined name of this object.
-    std::u8string name;
+    std::string name;
     // Dictionary object with extension-specific objects.
     std::optional<TextureExtension> extensions;
     // Application-specific data.
@@ -780,9 +780,9 @@ struct glTFExtras
 struct glTF
 {
     // Names of glTF extensions used somewhere in this asset.
-    std::vector<std::u8string> extensionsUsed;
+    std::vector<std::string> extensionsUsed;
     // Names of glTF extensions required to properly load this asset.
-    std::vector<std::u8string> extensionsRequired;
+    std::vector<std::string> extensionsRequired;
     // An array of accessors.
     std::vector<Accessor> accessors;
     // An array of keyframe animations.
