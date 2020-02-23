@@ -8,11 +8,11 @@
             "name": "gltf JSON Schema",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/launch.py",
+            "module": "sukonbu.cli",
             "args": [
                 "${workspaceFolder}/glTF/specification/2.0/schema/glTF.schema.json",
                 "--dst",
-                "${workspaceFolder}/generated/python"
+                "${workspaceFolder}/generated/python/sukonbu_gltf.py"
             ],
             "console": "integratedTerminal"
         }
