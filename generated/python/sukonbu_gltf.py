@@ -16,7 +16,8 @@ class AccessorComponentType(Enum):
 
     @staticmethod
     def from_dict(src) -> 'AccessorComponentType':
-        return AccessorComponentType(src)
+        dst = {}
+        return AccessorComponentType(dst)
 
 
 class AccessorType(Enum):
@@ -33,7 +34,8 @@ class AccessorType(Enum):
 
     @staticmethod
     def from_dict(src) -> 'AccessorType':
-        return AccessorType(src)
+        dst = {}
+        return AccessorType(dst)
 
 
 class AccessorSparseIndicesComponentType(Enum):
@@ -46,7 +48,8 @@ class AccessorSparseIndicesComponentType(Enum):
 
     @staticmethod
     def from_dict(src) -> 'AccessorSparseIndicesComponentType':
-        return AccessorSparseIndicesComponentType(src)
+        dst = {}
+        return AccessorSparseIndicesComponentType(dst)
 
 
 class AccessorSparseIndices(NamedTuple):
@@ -72,12 +75,13 @@ class AccessorSparseIndices(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'AccessorSparseIndices':
-        # bufferView do nothing
-        # byteOffset do nothing
-        if "componentType" in src: src["componentType"] = integer(src["componentType"]) # noqa
-        # extensions do nothing
-        # extras do nothing
-        return AccessorSparseIndices(**src)
+        dst = {}
+        if "bufferView" in src: dst["bufferView"] = src["bufferView"] # noqa copy
+        if "byteOffset" in src: dst["byteOffset"] = src["byteOffset"] # noqa copy
+        if "componentType" in src: dst["componentType"] = AccessorSparseIndicesComponentType(src["componentType"]) # noqa
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return AccessorSparseIndices(**dst)
 
 
 class AccessorSparseValues(NamedTuple):
@@ -100,11 +104,12 @@ class AccessorSparseValues(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'AccessorSparseValues':
-        # bufferView do nothing
-        # byteOffset do nothing
-        # extensions do nothing
-        # extras do nothing
-        return AccessorSparseValues(**src)
+        dst = {}
+        if "bufferView" in src: dst["bufferView"] = src["bufferView"] # noqa copy
+        if "byteOffset" in src: dst["byteOffset"] = src["byteOffset"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return AccessorSparseValues(**dst)
 
 
 class AccessorSparse(NamedTuple):
@@ -130,12 +135,13 @@ class AccessorSparse(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'AccessorSparse':
-        # count do nothing
-        if "indices" in src: src["indices"] = AccessorSparseIndices.from_dict(src["indices"]) # noqa
-        if "values" in src: src["values"] = AccessorSparseValues.from_dict(src["values"]) # noqa
-        # extensions do nothing
-        # extras do nothing
-        return AccessorSparse(**src)
+        dst = {}
+        if "count" in src: dst["count"] = src["count"] # noqa copy
+        if "indices" in src: dst["indices"] = AccessorSparseIndices.from_dict(src["indices"]) # noqa
+        if "values" in src: dst["values"] = AccessorSparseValues.from_dict(src["values"]) # noqa
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return AccessorSparse(**dst)
 
 
 class Accessor(NamedTuple):
@@ -182,19 +188,20 @@ class Accessor(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'Accessor':
-        # bufferView do nothing
-        # byteOffset do nothing
-        if "componentType" in src: src["componentType"] = integer(src["componentType"]) # noqa
-        # normalized do nothing
-        # count do nothing
-        if "type" in src: src["type"] = string(src["type"]) # noqa
-        if ("max" not in src): src["max"] = [] # noqa
-        if ("min" not in src): src["min"] = [] # noqa
-        if "sparse" in src: src["sparse"] = AccessorSparse.from_dict(src["sparse"]) # noqa
-        # name do nothing
-        # extensions do nothing
-        # extras do nothing
-        return Accessor(**src)
+        dst = {}
+        if "bufferView" in src: dst["bufferView"] = src["bufferView"] # noqa copy
+        if "byteOffset" in src: dst["byteOffset"] = src["byteOffset"] # noqa copy
+        if "componentType" in src: dst["componentType"] = AccessorComponentType(src["componentType"]) # noqa
+        if "normalized" in src: dst["normalized"] = src["normalized"] # noqa copy
+        if "count" in src: dst["count"] = src["count"] # noqa copy
+        if "type" in src: dst["type"] = AccessorType(src["type"]) # noqa
+        dst["max"] = src.get("max", [])
+        dst["min"] = src.get("min", [])
+        if "sparse" in src: dst["sparse"] = AccessorSparse.from_dict(src["sparse"]) # noqa
+        if "name" in src: dst["name"] = src["name"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return Accessor(**dst)
 
 
 class AnimationChannelTargetPath(Enum):
@@ -208,7 +215,8 @@ class AnimationChannelTargetPath(Enum):
 
     @staticmethod
     def from_dict(src) -> 'AnimationChannelTargetPath':
-        return AnimationChannelTargetPath(src)
+        dst = {}
+        return AnimationChannelTargetPath(dst)
 
 
 class AnimationChannelTarget(NamedTuple):
@@ -231,11 +239,12 @@ class AnimationChannelTarget(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'AnimationChannelTarget':
-        # node do nothing
-        if "path" in src: src["path"] = string(src["path"]) # noqa
-        # extensions do nothing
-        # extras do nothing
-        return AnimationChannelTarget(**src)
+        dst = {}
+        if "node" in src: dst["node"] = src["node"] # noqa copy
+        if "path" in src: dst["path"] = AnimationChannelTargetPath(src["path"]) # noqa
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return AnimationChannelTarget(**dst)
 
 
 class AnimationChannel(NamedTuple):
@@ -258,11 +267,12 @@ class AnimationChannel(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'AnimationChannel':
-        # sampler do nothing
-        if "target" in src: src["target"] = AnimationChannelTarget.from_dict(src["target"]) # noqa
-        # extensions do nothing
-        # extras do nothing
-        return AnimationChannel(**src)
+        dst = {}
+        if "sampler" in src: dst["sampler"] = src["sampler"] # noqa copy
+        if "target" in src: dst["target"] = AnimationChannelTarget.from_dict(src["target"]) # noqa
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return AnimationChannel(**dst)
 
 
 class AnimationSamplerInterpolation(Enum):
@@ -275,7 +285,8 @@ class AnimationSamplerInterpolation(Enum):
 
     @staticmethod
     def from_dict(src) -> 'AnimationSamplerInterpolation':
-        return AnimationSamplerInterpolation(src)
+        dst = {}
+        return AnimationSamplerInterpolation(dst)
 
 
 class AnimationSampler(NamedTuple):
@@ -301,12 +312,13 @@ class AnimationSampler(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'AnimationSampler':
-        # input do nothing
-        if "interpolation" in src: src["interpolation"] = string(src["interpolation"]) # noqa
-        # output do nothing
-        # extensions do nothing
-        # extras do nothing
-        return AnimationSampler(**src)
+        dst = {}
+        if "input" in src: dst["input"] = src["input"] # noqa copy
+        if "interpolation" in src: dst["interpolation"] = AnimationSamplerInterpolation(src["interpolation"]) # noqa
+        if "output" in src: dst["output"] = src["output"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return AnimationSampler(**dst)
 
 
 class Animation(NamedTuple):
@@ -332,12 +344,13 @@ class Animation(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'Animation':
-        src["channels"] = [AnimationChannel.from_dict(item) for item in src["channels"]] if "channels" in src else [] # noqa
-        src["samplers"] = [AnimationSampler.from_dict(item) for item in src["samplers"]] if "samplers" in src else [] # noqa
-        # name do nothing
-        # extensions do nothing
-        # extras do nothing
-        return Animation(**src)
+        dst = {}
+        dst["channels"] = [AnimationChannel.from_dict(item) for item in src["channels"]] if "channels" in src else [] # noqa
+        dst["samplers"] = [AnimationSampler.from_dict(item) for item in src["samplers"]] if "samplers" in src else [] # noqa
+        if "name" in src: dst["name"] = src["name"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return Animation(**dst)
 
 
 class Asset(NamedTuple):
@@ -366,13 +379,14 @@ class Asset(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'Asset':
-        # copyright do nothing
-        # generator do nothing
-        # version do nothing
-        # minVersion do nothing
-        # extensions do nothing
-        # extras do nothing
-        return Asset(**src)
+        dst = {}
+        if "copyright" in src: dst["copyright"] = src["copyright"] # noqa copy
+        if "generator" in src: dst["generator"] = src["generator"] # noqa copy
+        if "version" in src: dst["version"] = src["version"] # noqa copy
+        if "minVersion" in src: dst["minVersion"] = src["minVersion"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return Asset(**dst)
 
 
 class Buffer(NamedTuple):
@@ -398,12 +412,13 @@ class Buffer(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'Buffer':
-        # uri do nothing
-        # byteLength do nothing
-        # name do nothing
-        # extensions do nothing
-        # extras do nothing
-        return Buffer(**src)
+        dst = {}
+        if "uri" in src: dst["uri"] = src["uri"] # noqa copy
+        if "byteLength" in src: dst["byteLength"] = src["byteLength"] # noqa copy
+        if "name" in src: dst["name"] = src["name"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return Buffer(**dst)
 
 
 class BufferViewTarget(Enum):
@@ -415,7 +430,8 @@ class BufferViewTarget(Enum):
 
     @staticmethod
     def from_dict(src) -> 'BufferViewTarget':
-        return BufferViewTarget(src)
+        dst = {}
+        return BufferViewTarget(dst)
 
 
 class BufferView(NamedTuple):
@@ -450,15 +466,16 @@ class BufferView(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'BufferView':
-        # buffer do nothing
-        # byteOffset do nothing
-        # byteLength do nothing
-        # byteStride do nothing
-        if "target" in src: src["target"] = integer(src["target"]) # noqa
-        # name do nothing
-        # extensions do nothing
-        # extras do nothing
-        return BufferView(**src)
+        dst = {}
+        if "buffer" in src: dst["buffer"] = src["buffer"] # noqa copy
+        if "byteOffset" in src: dst["byteOffset"] = src["byteOffset"] # noqa copy
+        if "byteLength" in src: dst["byteLength"] = src["byteLength"] # noqa copy
+        if "byteStride" in src: dst["byteStride"] = src["byteStride"] # noqa copy
+        if "target" in src: dst["target"] = BufferViewTarget(src["target"]) # noqa
+        if "name" in src: dst["name"] = src["name"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return BufferView(**dst)
 
 
 class CameraOrthographic(NamedTuple):
@@ -487,13 +504,14 @@ class CameraOrthographic(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'CameraOrthographic':
-        # xmag do nothing
-        # ymag do nothing
-        # zfar do nothing
-        # znear do nothing
-        # extensions do nothing
-        # extras do nothing
-        return CameraOrthographic(**src)
+        dst = {}
+        if "xmag" in src: dst["xmag"] = src["xmag"] # noqa copy
+        if "ymag" in src: dst["ymag"] = src["ymag"] # noqa copy
+        if "zfar" in src: dst["zfar"] = src["zfar"] # noqa copy
+        if "znear" in src: dst["znear"] = src["znear"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return CameraOrthographic(**dst)
 
 
 class CameraPerspective(NamedTuple):
@@ -522,13 +540,14 @@ class CameraPerspective(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'CameraPerspective':
-        # aspectRatio do nothing
-        # yfov do nothing
-        # zfar do nothing
-        # znear do nothing
-        # extensions do nothing
-        # extras do nothing
-        return CameraPerspective(**src)
+        dst = {}
+        if "aspectRatio" in src: dst["aspectRatio"] = src["aspectRatio"] # noqa copy
+        if "yfov" in src: dst["yfov"] = src["yfov"] # noqa copy
+        if "zfar" in src: dst["zfar"] = src["zfar"] # noqa copy
+        if "znear" in src: dst["znear"] = src["znear"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return CameraPerspective(**dst)
 
 
 class CameraType(Enum):
@@ -540,7 +559,8 @@ class CameraType(Enum):
 
     @staticmethod
     def from_dict(src) -> 'CameraType':
-        return CameraType(src)
+        dst = {}
+        return CameraType(dst)
 
 
 class Camera(NamedTuple):
@@ -569,13 +589,14 @@ class Camera(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'Camera':
-        if "orthographic" in src: src["orthographic"] = CameraOrthographic.from_dict(src["orthographic"]) # noqa
-        if "perspective" in src: src["perspective"] = CameraPerspective.from_dict(src["perspective"]) # noqa
-        if "type" in src: src["type"] = string(src["type"]) # noqa
-        # name do nothing
-        # extensions do nothing
-        # extras do nothing
-        return Camera(**src)
+        dst = {}
+        if "orthographic" in src: dst["orthographic"] = CameraOrthographic.from_dict(src["orthographic"]) # noqa
+        if "perspective" in src: dst["perspective"] = CameraPerspective.from_dict(src["perspective"]) # noqa
+        if "type" in src: dst["type"] = CameraType(src["type"]) # noqa
+        if "name" in src: dst["name"] = src["name"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return Camera(**dst)
 
 
 class ImageMimeType(Enum):
@@ -587,7 +608,8 @@ class ImageMimeType(Enum):
 
     @staticmethod
     def from_dict(src) -> 'ImageMimeType':
-        return ImageMimeType(src)
+        dst = {}
+        return ImageMimeType(dst)
 
 
 class Image(NamedTuple):
@@ -616,13 +638,14 @@ class Image(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'Image':
-        # uri do nothing
-        if "mimeType" in src: src["mimeType"] = string(src["mimeType"]) # noqa
-        # bufferView do nothing
-        # name do nothing
-        # extensions do nothing
-        # extras do nothing
-        return Image(**src)
+        dst = {}
+        if "uri" in src: dst["uri"] = src["uri"] # noqa copy
+        if "mimeType" in src: dst["mimeType"] = ImageMimeType(src["mimeType"]) # noqa
+        if "bufferView" in src: dst["bufferView"] = src["bufferView"] # noqa copy
+        if "name" in src: dst["name"] = src["name"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return Image(**dst)
 
 
 class TextureInfo(NamedTuple):
@@ -645,11 +668,12 @@ class TextureInfo(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'TextureInfo':
-        # index do nothing
-        # texCoord do nothing
-        # extensions do nothing
-        # extras do nothing
-        return TextureInfo(**src)
+        dst = {}
+        if "index" in src: dst["index"] = src["index"] # noqa copy
+        if "texCoord" in src: dst["texCoord"] = src["texCoord"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return TextureInfo(**dst)
 
 
 class MaterialPBRMetallicRoughness(NamedTuple):
@@ -681,14 +705,15 @@ class MaterialPBRMetallicRoughness(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'MaterialPBRMetallicRoughness':
-        if ("baseColorFactor" not in src): src["baseColorFactor"] = [] # noqa
-        if "baseColorTexture" in src: src["baseColorTexture"] = TextureInfo.from_dict(src["baseColorTexture"]) # noqa
-        # metallicFactor do nothing
-        # roughnessFactor do nothing
-        if "metallicRoughnessTexture" in src: src["metallicRoughnessTexture"] = TextureInfo.from_dict(src["metallicRoughnessTexture"]) # noqa
-        # extensions do nothing
-        # extras do nothing
-        return MaterialPBRMetallicRoughness(**src)
+        dst = {}
+        dst["baseColorFactor"] = src.get("baseColorFactor", [])
+        if "baseColorTexture" in src: dst["baseColorTexture"] = TextureInfo.from_dict(src["baseColorTexture"]) # noqa
+        if "metallicFactor" in src: dst["metallicFactor"] = src["metallicFactor"] # noqa copy
+        if "roughnessFactor" in src: dst["roughnessFactor"] = src["roughnessFactor"] # noqa copy
+        if "metallicRoughnessTexture" in src: dst["metallicRoughnessTexture"] = TextureInfo.from_dict(src["metallicRoughnessTexture"]) # noqa
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return MaterialPBRMetallicRoughness(**dst)
 
 
 class MaterialNormalTextureInfo(NamedTuple):
@@ -714,12 +739,13 @@ class MaterialNormalTextureInfo(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'MaterialNormalTextureInfo':
-        # index do nothing
-        # texCoord do nothing
-        # scale do nothing
-        # extensions do nothing
-        # extras do nothing
-        return MaterialNormalTextureInfo(**src)
+        dst = {}
+        if "index" in src: dst["index"] = src["index"] # noqa copy
+        if "texCoord" in src: dst["texCoord"] = src["texCoord"] # noqa copy
+        if "scale" in src: dst["scale"] = src["scale"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return MaterialNormalTextureInfo(**dst)
 
 
 class MaterialOcclusionTextureInfo(NamedTuple):
@@ -745,12 +771,13 @@ class MaterialOcclusionTextureInfo(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'MaterialOcclusionTextureInfo':
-        # index do nothing
-        # texCoord do nothing
-        # strength do nothing
-        # extensions do nothing
-        # extras do nothing
-        return MaterialOcclusionTextureInfo(**src)
+        dst = {}
+        if "index" in src: dst["index"] = src["index"] # noqa copy
+        if "texCoord" in src: dst["texCoord"] = src["texCoord"] # noqa copy
+        if "strength" in src: dst["strength"] = src["strength"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return MaterialOcclusionTextureInfo(**dst)
 
 
 class MaterialAlphaMode(Enum):
@@ -763,7 +790,8 @@ class MaterialAlphaMode(Enum):
 
     @staticmethod
     def from_dict(src) -> 'MaterialAlphaMode':
-        return MaterialAlphaMode(src)
+        dst = {}
+        return MaterialAlphaMode(dst)
 
 
 class Material(NamedTuple):
@@ -807,18 +835,19 @@ class Material(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'Material':
-        # name do nothing
-        # extensions do nothing
-        # extras do nothing
-        if "pbrMetallicRoughness" in src: src["pbrMetallicRoughness"] = MaterialPBRMetallicRoughness.from_dict(src["pbrMetallicRoughness"]) # noqa
-        if "normalTexture" in src: src["normalTexture"] = MaterialNormalTextureInfo.from_dict(src["normalTexture"]) # noqa
-        if "occlusionTexture" in src: src["occlusionTexture"] = MaterialOcclusionTextureInfo.from_dict(src["occlusionTexture"]) # noqa
-        if "emissiveTexture" in src: src["emissiveTexture"] = TextureInfo.from_dict(src["emissiveTexture"]) # noqa
-        if ("emissiveFactor" not in src): src["emissiveFactor"] = [] # noqa
-        if "alphaMode" in src: src["alphaMode"] = string(src["alphaMode"]) # noqa
-        # alphaCutoff do nothing
-        # doubleSided do nothing
-        return Material(**src)
+        dst = {}
+        if "name" in src: dst["name"] = src["name"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        if "pbrMetallicRoughness" in src: dst["pbrMetallicRoughness"] = MaterialPBRMetallicRoughness.from_dict(src["pbrMetallicRoughness"]) # noqa
+        if "normalTexture" in src: dst["normalTexture"] = MaterialNormalTextureInfo.from_dict(src["normalTexture"]) # noqa
+        if "occlusionTexture" in src: dst["occlusionTexture"] = MaterialOcclusionTextureInfo.from_dict(src["occlusionTexture"]) # noqa
+        if "emissiveTexture" in src: dst["emissiveTexture"] = TextureInfo.from_dict(src["emissiveTexture"]) # noqa
+        dst["emissiveFactor"] = src.get("emissiveFactor", [])
+        if "alphaMode" in src: dst["alphaMode"] = MaterialAlphaMode(src["alphaMode"]) # noqa
+        if "alphaCutoff" in src: dst["alphaCutoff"] = src["alphaCutoff"] # noqa copy
+        if "doubleSided" in src: dst["doubleSided"] = src["doubleSided"] # noqa copy
+        return Material(**dst)
 
 
 class MeshPrimitiveMode(Enum):
@@ -835,7 +864,8 @@ class MeshPrimitiveMode(Enum):
 
     @staticmethod
     def from_dict(src) -> 'MeshPrimitiveMode':
-        return MeshPrimitiveMode(src)
+        dst = {}
+        return MeshPrimitiveMode(dst)
 
 
 class MeshPrimitive(NamedTuple):
@@ -867,14 +897,15 @@ class MeshPrimitive(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'MeshPrimitive':
-        if ("attributes" not in src): src["attributes"] = {} # noqa
-        # indices do nothing
-        # material do nothing
-        if "mode" in src: src["mode"] = integer(src["mode"]) # noqa
-        if ("targets" not in src): src["targets"] = [] # noqa
-        # extensions do nothing
-        # extras do nothing
-        return MeshPrimitive(**src)
+        dst = {}
+        dst["attributes"] = src.get("attributes", {})
+        if "indices" in src: dst["indices"] = src["indices"] # noqa copy
+        if "material" in src: dst["material"] = src["material"] # noqa copy
+        if "mode" in src: dst["mode"] = MeshPrimitiveMode(src["mode"]) # noqa
+        dst["targets"] = src.get("targets", [])
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return MeshPrimitive(**dst)
 
 
 class Mesh(NamedTuple):
@@ -900,12 +931,13 @@ class Mesh(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'Mesh':
-        src["primitives"] = [MeshPrimitive.from_dict(item) for item in src["primitives"]] if "primitives" in src else [] # noqa
-        if ("weights" not in src): src["weights"] = [] # noqa
-        # name do nothing
-        # extensions do nothing
-        # extras do nothing
-        return Mesh(**src)
+        dst = {}
+        dst["primitives"] = [MeshPrimitive.from_dict(item) for item in src["primitives"]] if "primitives" in src else [] # noqa
+        dst["weights"] = src.get("weights", [])
+        if "name" in src: dst["name"] = src["name"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return Mesh(**dst)
 
 
 class Node(NamedTuple):
@@ -952,19 +984,20 @@ class Node(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'Node':
-        # camera do nothing
-        if ("children" not in src): src["children"] = [] # noqa
-        # skin do nothing
-        if ("matrix" not in src): src["matrix"] = [] # noqa
-        # mesh do nothing
-        if ("rotation" not in src): src["rotation"] = [] # noqa
-        if ("scale" not in src): src["scale"] = [] # noqa
-        if ("translation" not in src): src["translation"] = [] # noqa
-        if ("weights" not in src): src["weights"] = [] # noqa
-        # name do nothing
-        # extensions do nothing
-        # extras do nothing
-        return Node(**src)
+        dst = {}
+        if "camera" in src: dst["camera"] = src["camera"] # noqa copy
+        dst["children"] = src.get("children", [])
+        if "skin" in src: dst["skin"] = src["skin"] # noqa copy
+        dst["matrix"] = src.get("matrix", [])
+        if "mesh" in src: dst["mesh"] = src["mesh"] # noqa copy
+        dst["rotation"] = src.get("rotation", [])
+        dst["scale"] = src.get("scale", [])
+        dst["translation"] = src.get("translation", [])
+        dst["weights"] = src.get("weights", [])
+        if "name" in src: dst["name"] = src["name"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return Node(**dst)
 
 
 class SamplerMagFilter(Enum):
@@ -976,7 +1009,8 @@ class SamplerMagFilter(Enum):
 
     @staticmethod
     def from_dict(src) -> 'SamplerMagFilter':
-        return SamplerMagFilter(src)
+        dst = {}
+        return SamplerMagFilter(dst)
 
 
 class SamplerMinFilter(Enum):
@@ -992,7 +1026,8 @@ class SamplerMinFilter(Enum):
 
     @staticmethod
     def from_dict(src) -> 'SamplerMinFilter':
-        return SamplerMinFilter(src)
+        dst = {}
+        return SamplerMinFilter(dst)
 
 
 class SamplerWrapS(Enum):
@@ -1005,7 +1040,8 @@ class SamplerWrapS(Enum):
 
     @staticmethod
     def from_dict(src) -> 'SamplerWrapS':
-        return SamplerWrapS(src)
+        dst = {}
+        return SamplerWrapS(dst)
 
 
 class SamplerWrapT(Enum):
@@ -1018,7 +1054,8 @@ class SamplerWrapT(Enum):
 
     @staticmethod
     def from_dict(src) -> 'SamplerWrapT':
-        return SamplerWrapT(src)
+        dst = {}
+        return SamplerWrapT(dst)
 
 
 class Sampler(NamedTuple):
@@ -1050,14 +1087,15 @@ class Sampler(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'Sampler':
-        if "magFilter" in src: src["magFilter"] = integer(src["magFilter"]) # noqa
-        if "minFilter" in src: src["minFilter"] = integer(src["minFilter"]) # noqa
-        if "wrapS" in src: src["wrapS"] = integer(src["wrapS"]) # noqa
-        if "wrapT" in src: src["wrapT"] = integer(src["wrapT"]) # noqa
-        # name do nothing
-        # extensions do nothing
-        # extras do nothing
-        return Sampler(**src)
+        dst = {}
+        if "magFilter" in src: dst["magFilter"] = SamplerMagFilter(src["magFilter"]) # noqa
+        if "minFilter" in src: dst["minFilter"] = SamplerMinFilter(src["minFilter"]) # noqa
+        if "wrapS" in src: dst["wrapS"] = SamplerWrapS(src["wrapS"]) # noqa
+        if "wrapT" in src: dst["wrapT"] = SamplerWrapT(src["wrapT"]) # noqa
+        if "name" in src: dst["name"] = src["name"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return Sampler(**dst)
 
 
 class Scene(NamedTuple):
@@ -1080,11 +1118,12 @@ class Scene(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'Scene':
-        if ("nodes" not in src): src["nodes"] = [] # noqa
-        # name do nothing
-        # extensions do nothing
-        # extras do nothing
-        return Scene(**src)
+        dst = {}
+        dst["nodes"] = src.get("nodes", [])
+        if "name" in src: dst["name"] = src["name"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return Scene(**dst)
 
 
 class Skin(NamedTuple):
@@ -1113,13 +1152,14 @@ class Skin(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'Skin':
-        # inverseBindMatrices do nothing
-        # skeleton do nothing
-        if ("joints" not in src): src["joints"] = [] # noqa
-        # name do nothing
-        # extensions do nothing
-        # extras do nothing
-        return Skin(**src)
+        dst = {}
+        if "inverseBindMatrices" in src: dst["inverseBindMatrices"] = src["inverseBindMatrices"] # noqa copy
+        if "skeleton" in src: dst["skeleton"] = src["skeleton"] # noqa copy
+        dst["joints"] = src.get("joints", [])
+        if "name" in src: dst["name"] = src["name"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return Skin(**dst)
 
 
 class Texture(NamedTuple):
@@ -1145,12 +1185,13 @@ class Texture(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'Texture':
-        # sampler do nothing
-        # source do nothing
-        # name do nothing
-        # extensions do nothing
-        # extras do nothing
-        return Texture(**src)
+        dst = {}
+        if "sampler" in src: dst["sampler"] = src["sampler"] # noqa copy
+        if "source" in src: dst["source"] = src["source"] # noqa copy
+        if "name" in src: dst["name"] = src["name"] # noqa copy
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return Texture(**dst)
 
 
 class glTF(NamedTuple):
@@ -1218,26 +1259,27 @@ class glTF(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> 'glTF':
-        if ("extensionsUsed" not in src): src["extensionsUsed"] = [] # noqa
-        if ("extensionsRequired" not in src): src["extensionsRequired"] = [] # noqa
-        src["accessors"] = [Accessor.from_dict(item) for item in src["accessors"]] if "accessors" in src else [] # noqa
-        src["animations"] = [Animation.from_dict(item) for item in src["animations"]] if "animations" in src else [] # noqa
-        if "asset" in src: src["asset"] = Asset.from_dict(src["asset"]) # noqa
-        src["buffers"] = [Buffer.from_dict(item) for item in src["buffers"]] if "buffers" in src else [] # noqa
-        src["bufferViews"] = [BufferView.from_dict(item) for item in src["bufferViews"]] if "bufferViews" in src else [] # noqa
-        src["cameras"] = [Camera.from_dict(item) for item in src["cameras"]] if "cameras" in src else [] # noqa
-        src["images"] = [Image.from_dict(item) for item in src["images"]] if "images" in src else [] # noqa
-        src["materials"] = [Material.from_dict(item) for item in src["materials"]] if "materials" in src else [] # noqa
-        src["meshes"] = [Mesh.from_dict(item) for item in src["meshes"]] if "meshes" in src else [] # noqa
-        src["nodes"] = [Node.from_dict(item) for item in src["nodes"]] if "nodes" in src else [] # noqa
-        src["samplers"] = [Sampler.from_dict(item) for item in src["samplers"]] if "samplers" in src else [] # noqa
-        # scene do nothing
-        src["scenes"] = [Scene.from_dict(item) for item in src["scenes"]] if "scenes" in src else [] # noqa
-        src["skins"] = [Skin.from_dict(item) for item in src["skins"]] if "skins" in src else [] # noqa
-        src["textures"] = [Texture.from_dict(item) for item in src["textures"]] if "textures" in src else [] # noqa
-        # extensions do nothing
-        # extras do nothing
-        return glTF(**src)
+        dst = {}
+        dst["extensionsUsed"] = src.get("extensionsUsed", [])
+        dst["extensionsRequired"] = src.get("extensionsRequired", [])
+        dst["accessors"] = [Accessor.from_dict(item) for item in src["accessors"]] if "accessors" in src else [] # noqa
+        dst["animations"] = [Animation.from_dict(item) for item in src["animations"]] if "animations" in src else [] # noqa
+        if "asset" in src: dst["asset"] = Asset.from_dict(src["asset"]) # noqa
+        dst["buffers"] = [Buffer.from_dict(item) for item in src["buffers"]] if "buffers" in src else [] # noqa
+        dst["bufferViews"] = [BufferView.from_dict(item) for item in src["bufferViews"]] if "bufferViews" in src else [] # noqa
+        dst["cameras"] = [Camera.from_dict(item) for item in src["cameras"]] if "cameras" in src else [] # noqa
+        dst["images"] = [Image.from_dict(item) for item in src["images"]] if "images" in src else [] # noqa
+        dst["materials"] = [Material.from_dict(item) for item in src["materials"]] if "materials" in src else [] # noqa
+        dst["meshes"] = [Mesh.from_dict(item) for item in src["meshes"]] if "meshes" in src else [] # noqa
+        dst["nodes"] = [Node.from_dict(item) for item in src["nodes"]] if "nodes" in src else [] # noqa
+        dst["samplers"] = [Sampler.from_dict(item) for item in src["samplers"]] if "samplers" in src else [] # noqa
+        if "scene" in src: dst["scene"] = src["scene"] # noqa copy
+        dst["scenes"] = [Scene.from_dict(item) for item in src["scenes"]] if "scenes" in src else [] # noqa
+        dst["skins"] = [Skin.from_dict(item) for item in src["skins"]] if "skins" in src else [] # noqa
+        dst["textures"] = [Texture.from_dict(item) for item in src["textures"]] if "textures" in src else [] # noqa
+        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
+        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        return glTF(**dst)
 
 
 if __name__ == '__main__':

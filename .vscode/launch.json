@@ -5,7 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "gltf JSON Schema",
+            "name": "test python gltf",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/python_test.py",
+            "console": "integratedTerminal",
+        },
+        {
+            "name": "generate python gltf",
             "type": "python",
             "request": "launch",
             "module": "sukonbu.cli",

@@ -16,10 +16,11 @@ class {{ class_name }}(Enum):
 
     @staticmethod
     def from_dict(src) -> '{{ class_name }}':
+        dst = {}
 {%- for read in reads %}
         {{ read }}
 {%- endfor %}
-        return {{ class_name }}(src)
+        return {{ class_name }}(dst)
 
 ''')
 
@@ -40,10 +41,11 @@ class {{ class_name }}(NamedTuple):
 
     @staticmethod
     def from_dict(src: dict) -> '{{ class_name }}':
+        dst = {}
 {%- for read in reads %}
         {{ read }}
 {%- endfor %}
-        return {{ class_name }}(**src)
+        return {{ class_name }}(**dst)
 
 ''')
 
@@ -82,7 +84,7 @@ def js_to_pythontype(name: str, js: JsonSchema, parent: JsonSchema) -> str:
         return f'List[{js_to_pythontype(name, js.items, js)}]'
     elif js.type == 'unknown':
         return 'Dict[str, Any]'
-    else: # js.type == 'object' or else
+    else:  # js.type == 'object' or else
         if js.properties and js.additionalProperties:
             raise Exception()
         if js.properties:
@@ -110,22 +112,23 @@ def read_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
     from_dict
     '''
     if js.get_enum_values():
-        return f'if "{name}" in src: src["{name}"] = {js.get_class_name()}(src["{name}"]) # noqa'
+        return f'if "{name}" in src: dst["{name}"] = {js.title}(src["{name}"]) # noqa'
 
     if js.properties:
         # object
-        return f'if "{name}" in src: src["{name}"] = {js.get_class_name()}.from_dict(src["{name}"]) # noqa'
+        return f'if "{name}" in src: dst["{name}"] = {js.get_class_name()}.from_dict(src["{name}"]) # noqa'
 
     if js.additionalProperties or js.type == 'unknown':
-        return f'if ("{name}" not in src): src["{name}"] = {{}} # noqa'
+        return f'dst["{name}"] = src.get("{name}", {{}})'
 
     if js.type == 'array':
         if js.items.properties:
-            return f'src["{name}"] = [{js.items.get_class_name()}.from_dict(item) for item in src["{name}"]] if "{name}" in src else [] # noqa'
+            return f'dst["{name}"] = [{js.items.get_class_name()}.from_dict(item) for item in src["{name}"]] if "{name}" in src else [] # noqa'
         else:
-            return f'if ("{name}" not in src): src["{name}"] = [] # noqa'
+            return f'dst["{name}"] = src.get("{name}", [])'
 
-    return f'# {name} do nothing'
+    # return f'# {name} do nothing'
+    return f'if "{name}" in src: dst["{name}"] = src["{name}"] # noqa copy'
 
 
 def write_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
@@ -177,10 +180,22 @@ def generate(self: JsonSchemaParser, dst: pathlib.Path) -> None:
         if js.items:
             traverse('[]', js.items, js)
         if js not in used:
-            schemas.append((name, js, parent))
-            used.append(js)
+           schemas.append((name, js, parent))
+           used.append(js)
 
     traverse('', self.root, None)
+
+    # update enum
+    for i, (name, js, parent) in enumerate(schemas):
+        if js.get_enum_values():
+            # update
+            enum_name = get_enum_name(name, js, parent)
+            src = js._asdict()
+            src['title'] = enum_name
+            js = JsonSchema(**src)
+            schemas[i] = (name, js, parent)
+            a = 0
+ 
 
     print(f'write: {dst}')
     dst.parent.mkdir(parents=True, exist_ok=True)
