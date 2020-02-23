@@ -50,10 +50,6 @@ class {{ class_name }}(NamedTuple):
 ''')
 
 
-def get_enum_name(name: str, js: JsonSchema, parent: JsonSchema) -> str:
-    return parent.get_class_name() + name[0:1].upper() + name[1:]
-
-
 def js_to_pythontype(name: str, js: JsonSchema, parent: JsonSchema) -> str:
     '''
     convert JsonSchema to pythontype
@@ -70,7 +66,7 @@ def js_to_pythontype(name: str, js: JsonSchema, parent: JsonSchema) -> str:
 
     enum_values = js.get_enum_values()
     if enum_values:
-        return get_enum_name(name, js, parent)
+        return js.title
 
     if js.type == 'integer':
         return 'int'
@@ -180,22 +176,10 @@ def generate(self: JsonSchemaParser, dst: pathlib.Path) -> None:
         if js.items:
             traverse('[]', js.items, js)
         if js not in used:
-           schemas.append((name, js, parent))
-           used.append(js)
+            schemas.append((name, js, parent))
+            used.append(js)
 
     traverse('', self.root, None)
-
-    # update enum
-    for i, (name, js, parent) in enumerate(schemas):
-        if js.get_enum_values():
-            # update
-            enum_name = get_enum_name(name, js, parent)
-            src = js._asdict()
-            src['title'] = enum_name
-            js = JsonSchema(**src)
-            schemas[i] = (name, js, parent)
-            a = 0
- 
 
     print(f'write: {dst}')
     dst.parent.mkdir(parents=True, exist_ok=True)
@@ -212,7 +196,7 @@ from enum import Enum
                     raise Exception()
                 value_map = {
                     'class_name':
-                    get_enum_name(key, js, parent),
+                    js.title,
                     'props': [enum_value(value) for value in enum_values],
                     'reads':
                     [read_func(k, v, js) for k, v in js.properties.items()]
