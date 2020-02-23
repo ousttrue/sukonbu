@@ -39,6 +39,9 @@ struct glb
     {
         const uint8_t *p = nullptr;
         int size = 0;
+
+        const uint8_t *begin() const { return p; }
+        const uint8_t *end() const { return p + size; }
     };
     chunk json;
     chunk bin;
