@@ -4,3 +4,9 @@
 [submodule "glTF-Sample-Models"]
 	path = glTF-Sample-Models
 	url = https://github.com/KhronosGroup/glTF-Sample-Models.git
+[submodule "cpp_user/Catch2"]
+	path = cpp_user/Catch2
+	url = https://github.com/catchorg/Catch2.git
+[submodule "cpp_user/nlohmann-json"]
+	path = cpp_user/nlohmann-json
+	url = https://github.com/nlohmann/json.git
