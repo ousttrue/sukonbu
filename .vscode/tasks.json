@@ -4,6 +4,21 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "generate cpp",
+            "type": "shell",
+            "command": "python",
+            "args": [
+                "-m",
+                "sukonbu.cli",
+                "--lang",
+                "cpp",
+                "${workspaceFolder}/glTF/specification/2.0/schema/glTF.schema.json",
+                "--dst",
+                "${workspaceFolder}/generated/cpp/sukonbu_gltf.h"
+            ],
+            "problemMatcher": []
+        },
+        {
             "label": "generate python",
             "type": "shell",
             "command": "python",
@@ -15,6 +30,6 @@
                 "${workspaceFolder}/generated/python/sukonbu_gltf.py"
             ],
             "problemMatcher": []
-        }
+        },
     ]
 }

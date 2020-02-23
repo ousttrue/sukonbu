@@ -5,6 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "generate cpp",
+            "type": "python",
+            "request": "launch",
+            "module": "sukonbu.cli",
+            "args": [
+                "${workspaceFolder}/glTF/specification/2.0/schema/glTF.schema.json",
+                "--lang",
+                "cpp",
+                "--dst",
+                "${workspaceFolder}/generated/cpp/sukonbu_gltf.h"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "test python gltf",
             "type": "python",
             "request": "launch",
@@ -12,7 +26,7 @@
             "console": "integratedTerminal",
         },
         {
-            "name": "generate python gltf",
+            "name": "generate python",
             "type": "python",
             "request": "launch",
             "module": "sukonbu.cli",

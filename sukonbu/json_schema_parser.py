@@ -1,7 +1,13 @@
 import json
 import pathlib
-from typing import Dict, Optional
+from typing import Dict, Optional, NamedTuple, List
 from .json_schema import JsonSchema
+
+
+class JsonSchemaItem(NamedTuple):
+    key: str
+    item: JsonSchema
+    parent: Optional[JsonSchema] = None
 
 
 class JsonSchemaParser:
@@ -9,6 +15,7 @@ class JsonSchemaParser:
         self.root: Optional[JsonSchema] = None
         self.path_map = {}
         self.schema_map: Dict[str, JsonSchema] = {}
+        self.schemas: List[JsonSchemaItem] = []
 
     def from_dict(self, root: dict) -> 'JsonSchema':
         '''
@@ -47,7 +54,8 @@ class JsonSchemaParser:
 
             if node.get('anyOf'):
                 # enum
-                node['title'] = parent['title'].replace(' ', '') + key[0:1].upper() + key[1:]
+                node['title'] = parent['title'].replace(
+                    ' ', '') + key[0:1].upper() + key[1:]
 
             js = JsonSchema(**node)
             if path:
@@ -157,6 +165,21 @@ class JsonSchemaParser:
         parsed = json.loads(text)
         processed = self.preprocess(parsed, entry_point.parent)
         self.root = self.from_dict(processed)
+
+        if self.root:
+
+            used: List[JsonSchema] = []
+
+            def traverse(name: str, js: JsonSchema, parent: Optional[JsonSchema]):
+                for k, v in js.properties.items():
+                    traverse(k, v, js)
+                if js.items:
+                    traverse('[]', js.items, js)
+                if js not in used:
+                    self.schemas.append(JsonSchemaItem(name, js, parent))
+                    used.append(js)
+
+            traverse('', self.root, None)
 
     def print(self) -> None:
         for key, js in self.schema_map.items():

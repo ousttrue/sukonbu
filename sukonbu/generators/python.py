@@ -164,23 +164,6 @@ def enum_value(src: str) -> str:
 
 
 def generate(self: JsonSchemaParser, dst: pathlib.Path) -> None:
-    if not self.root:
-        return
-
-    used: List[JsonSchema] = []
-    schemas: List[Tuple[str, JsonSchema, Optional[JsonSchema]]] = []
-
-    def traverse(name: str, js: JsonSchema, parent: Optional[JsonSchema]):
-        for k, v in js.properties.items():
-            traverse(k, v, js)
-        if js.items:
-            traverse('[]', js.items, js)
-        if js not in used:
-            schemas.append((name, js, parent))
-            used.append(js)
-
-    traverse('', self.root, None)
-
     print(f'write: {dst}')
     dst.parent.mkdir(parents=True, exist_ok=True)
     with dst.open('w') as w:
