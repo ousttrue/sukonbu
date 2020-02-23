@@ -1,5 +1,5 @@
 #define CATCH_CONFIG_MAIN
-#include <sukonbu_gltf_nlohmann-json.h>
+#include <gltfformat/gltf_nlohmann_json.h>
 #include <fstream>
 #include <string_view>
 #include <vector>
@@ -36,7 +36,7 @@ void test_gltf(const std::string &test_path)
     // parse json
     auto j = nlohmann::json::parse(json_string);
     // deserialize
-    sukonbu::glTF gltf;
+    gltfformat::glTF gltf;
     j.get_to(gltf);
 
     auto &mesh = gltf.meshes[0];
@@ -45,8 +45,8 @@ void test_gltf(const std::string &test_path)
     REQUIRE(indices_accessor_index.has_value());
     REQUIRE(0 == indices_accessor_index.value());
     auto indices_accessor = gltf.accessors[indices_accessor_index.value()];
-    REQUIRE(indices_accessor.componentType.value() == sukonbu::AccessorComponentType::UNSIGNED_SHORT);
-    REQUIRE(indices_accessor.type.value() == sukonbu::AccessorType::SCALAR);
+    REQUIRE(indices_accessor.componentType.value() == gltfformat::AccessorComponentType::UNSIGNED_SHORT);
+    REQUIRE(indices_accessor.type.value() == gltfformat::AccessorType::SCALAR);
     auto indices_view = gltf.bufferViews[indices_accessor.bufferView.value()];
     // auto p = (const uint16_t *)indices_view.data;
     // REQUIRE(0 == p[0]);

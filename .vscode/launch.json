@@ -14,7 +14,9 @@
                 "--lang",
                 "cpp",
                 "--dst",
-                "${workspaceFolder}/generated/cpp/sukonbu_gltf.h"
+                "${workspaceFolder}/gltfformat/include/gltfformat/gltf.h",
+                "--namespace",
+                "gltfformat"
             ],
             "console": "integratedTerminal"
         },

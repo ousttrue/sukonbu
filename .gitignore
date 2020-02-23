@@ -1,4 +1,4 @@
 /.mypy_cache
 *.pyc
 /build/
-/cpp_user/build/
+/gltfformat/build/

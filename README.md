@@ -1,4 +1,10 @@
-# sukonbu
+# GltfFormat
+
+## gltfformat
+
+generated gltf reader.
+
+## sukonbu
 
 JSON Schema converter.
 A code generator for GLTF read/write.
@@ -13,23 +19,23 @@ So I made this.
 * generate deserializer for that containers
 * generate serializer for that containers(Skip unnecessary object properties)
 
-## ToDo
+### ToDo
 
 * [x] python generator
 * [ ] (WIP)D generator
 * [ ] C# generator
-* [ ] (WIP)C++ generator
+* [x] (WIP)C++ generator
 * [ ] manipulate Extensions and Extras
 
-## Usage
+### Usage
 
 ```
 $ python -m sukonbu.cli PATH_TO_GLTF_JSONSCHEMA --lang python --dst PATH_TO_GENERATE_FILE
 ```
 
-## examples
+### examples
 
-### python3 with typing
+#### python3 with typing
 
 ```py
 class MeshPrimitive(NamedTuple):

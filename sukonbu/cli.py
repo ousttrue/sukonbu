@@ -19,6 +19,7 @@ def main():
                         choices=['python', 'dlang', 'cpp'],
                         help='generate language.')
     parser.add_argument('--dst', help='output directory.')
+    parser.add_argument('--namespace', default='sukonbu')
     args = parser.parse_args()
 
     # source json path
@@ -39,7 +40,7 @@ def main():
         elif args.lang == 'dlang':
             dlang.generate(js_parser, dst)
         elif args.lang == 'cpp':
-            cpp.generate(js_parser, dst)
+            cpp.generate(js_parser, dst, args.namespace)
         else:
             raise NotImplementedError(args.lang)
 

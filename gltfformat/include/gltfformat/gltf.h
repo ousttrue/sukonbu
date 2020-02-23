@@ -4,8 +4,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace sukonbu {
-
+namespace gltfformat {
 enum class AccessorComponentType
 {
     BYTE = 5120,
@@ -818,4 +817,4 @@ struct glTF
     // Application-specific data.
     std::optional<glTFExtras> extras;
 };
-} // namespace sukonbu
+} // end of namespace
