@@ -73,17 +73,20 @@ public:
         m_buffer.push_back({glbBin, byteLength});
     }
 
+    buffer get_bytes(const BufferView &view) const
+    {
+        auto &buffer = m_gltf.buffers[view.buffer.value()];
+        auto bytes = m_buffer[view.buffer.value()];
+        return bytes
+            .slice(0, buffer.byteLength.value())
+            .slice(view.byteOffset.value_or(0), view.byteLength.value());
+    }
+
     buffer get_bytes(const Accessor &accessor) const
     {
         auto &view = m_gltf.bufferViews[accessor.bufferView.value()];
-        auto &buffer = m_gltf.buffers[view.buffer.value()];
-        auto &bytes = m_buffer[view.buffer.value()];
-
         auto accessor_stride = get_stride(accessor);
-
-        return bytes
-            .slice(0, buffer.byteLength.value())
-            .slice(view.byteOffset.value_or(0), view.byteLength.value())
+        return get_bytes(view)
             .slice(accessor.byteOffset.value_or(0), accessor.count.value() * accessor_stride);
     }
 };
