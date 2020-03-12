@@ -4,9 +4,3 @@
 [submodule "glTF-Sample-Models"]
 	path = glTF-Sample-Models
 	url = https://github.com/KhronosGroup/glTF-Sample-Models.git
-[submodule "gltfformat/Catch2"]
-	path = gltfformat/Catch2
-	url = https://github.com/catchorg/Catch2.git
-[submodule "gltfformat/nlohmann-json"]
-	path = gltfformat/nlohmann-json
-	url = https://github.com/nlohmann/json.git
