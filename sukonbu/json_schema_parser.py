@@ -11,17 +11,20 @@ class JsonSchemaItem(NamedTuple):
 
 
 class JsonSchemaParser:
-    def __init__(self):
+    def __init__(self, dir: Optional[pathlib.Path] = None):
         self.root: Optional[JsonSchema] = None
         self.path_map = {}
         self.schema_map: Dict[str, JsonSchema] = {}
         self.schemas: List[JsonSchemaItem] = []
+        self.dir: Optional[pathlib.Path] = dir
 
     def from_dict(self, root: dict) -> 'JsonSchema':
         '''
         replace dict to JsonSchema by depth first
         '''
-        def traverse(node: dict, parent: Optional[dict] = None, key: Optional[str] = None) -> JsonSchema:
+        def traverse(node: dict,
+                     parent: Optional[dict] = None,
+                     key: Optional[str] = None) -> JsonSchema:
             if parent and 'title' in node and node['title'] in [
                     'Extension', 'Extras'
             ]:
@@ -64,10 +67,14 @@ class JsonSchemaParser:
 
         return traverse(root)
 
-    def get_or_read_ref(self, path: pathlib.Path) -> dict:
-        ref = self.path_map.get(path)
-        if ref:
-            return ref
+    def get_or_read_ref(self, dir: pathlib.Path, filename: str) -> dict:
+        path = dir / filename
+        if not path.exists():
+            path = self.dir / filename
+
+        # ref = self.path_map.get(path)
+        # if ref:
+        #     return ref
         text = path.read_text()
         ref_parsed = json.loads(text)
         ref = self.preprocess(ref_parsed, path.parent)
@@ -81,17 +88,15 @@ class JsonSchemaParser:
 
         if '$ref' in parsed:
             # replace
-            path = directory / parsed['$ref']
             # print(path)
-            ref = self.get_or_read_ref(path)
+            ref = self.get_or_read_ref(directory, parsed['$ref'])
             for k, v in ref.items():
                 parsed[k] = v
             del parsed['$ref']
 
         if 'allOf' in parsed:
             # inherited
-            path = directory / parsed['allOf'][0]['$ref']
-            ref = self.get_or_read_ref(path)
+            ref = self.get_or_read_ref(directory, parsed['allOf'][0]['$ref'])
             for k, v in ref.items():
                 if k in parsed:
                     if k == 'properties':
@@ -170,7 +175,8 @@ class JsonSchemaParser:
 
             used: List[JsonSchema] = []
 
-            def traverse(name: str, js: JsonSchema, parent: Optional[JsonSchema]):
+            def traverse(name: str, js: JsonSchema,
+                         parent: Optional[JsonSchema]):
                 for k, v in js.properties.items():
                     traverse(k, v, js)
                 if js.items:

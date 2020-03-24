@@ -921,4 +921,23 @@ void from_json(const json& j, glTF& p) {
     if(j.find("extensions")!=j.end()) j.at("extensions").get_to(p.extensions);
     if(j.find("extras")!=j.end()) j.at("extras").get_to(p.extras);
 }
+
+void to_json(json& j, const KHR_materials_unlitglTFextensionExtension & p) {
+}
+void from_json(const json& j, KHR_materials_unlitglTFextensionExtension& p) {
+}
+
+void to_json(json& j, const KHR_materials_unlitglTFextensionExtras & p) {
+}
+void from_json(const json& j, KHR_materials_unlitglTFextensionExtras& p) {
+}
+
+void to_json(json& j, const KHR_materials_unlitglTFextension & p) {
+    
+    
+}
+void from_json(const json& j, KHR_materials_unlitglTFextension& p) {
+    if(j.find("extensions")!=j.end()) j.at("extensions").get_to(p.extensions);
+    if(j.find("extras")!=j.end()) j.at("extras").get_to(p.extras);
+}
 } // end of namespace

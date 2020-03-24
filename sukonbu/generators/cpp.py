@@ -214,17 +214,6 @@ def generate(parser: JsonSchemaParser, dst: pathlib.Path, namespace: str) -> Non
                 }
                 w.write(CPP_ENUM.render(**value_map))
 
-            elif js.title in ['Extension', 'Extras']:
-                if not parent:
-                    raise Exception()
-                value_map = {
-                    'class_name': js.get_class_name(),
-                    'props': [],
-                    'writes': [],
-                    'reads': [],
-                }
-                w.write(CPP_CLASS.render(**value_map))
-
             elif js.properties:
                 props = [(
                     v.description,
@@ -239,6 +228,17 @@ def generate(parser: JsonSchemaParser, dst: pathlib.Path, namespace: str) -> Non
                     [write_func(k, v, js) for k, v in js.properties.items()],
                     'reads':
                     [read_func(k, v, js) for k, v in js.properties.items()]
+                }
+                w.write(CPP_CLASS.render(**value_map))
+
+            elif js.title in ['Extension', 'Extras']:
+                if not parent:
+                    raise Exception()
+                value_map = {
+                    'class_name': js.get_class_name(),
+                    'props': [],
+                    'writes': [],
+                    'reads': [],
                 }
                 w.write(CPP_CLASS.render(**value_map))
 

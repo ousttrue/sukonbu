@@ -30,8 +30,17 @@ def main():
         raise FileExistsError(path)
 
     # parse
+    gltf_path = pathlib.Path(path)
     js_parser = JsonSchemaParser()
-    js_parser.process(pathlib.Path(path))
+    js_parser.process(gltf_path)
+
+    # extensions
+    ex_path = gltf_path.parent.parent.parent.parent / 'extensions/2.0/Khronos/KHR_materials_unlit/schema/gltf.KHR_materials_unlit.schema.json'
+    print(ex_path)
+    ex_parser = JsonSchemaParser(gltf_path.parent)
+    ex_parser.process(ex_path)
+    js_parser.root.properties['materials'].items.properties['extensions'].properties['KHR_materials_unlit'] = ex_parser.root
+    js_parser.schemas += ex_parser.schemas
 
     if args.dst:
         dst = pathlib.Path(args.dst)
