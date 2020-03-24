@@ -514,8 +514,10 @@ void from_json(const json& j, Image& p) {
 }
 
 void to_json(json& j, const MaterialExtension & p) {
+    
 }
 void from_json(const json& j, MaterialExtension& p) {
+    if(j.find("KHR_materials_unlit")!=j.end()) j.at("KHR_materials_unlit").get_to(p.KHR_materials_unlit);
 }
 
 void to_json(json& j, const MaterialExtras & p) {

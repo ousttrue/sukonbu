@@ -196,7 +196,8 @@ void from_json(const json& j, {{ class_name }}& p) {
 ''')
 
 
-def generate(parser: JsonSchemaParser, dst: pathlib.Path, namespace: str) -> None:
+def generate(parser: JsonSchemaParser, dst: pathlib.Path,
+             namespace: str) -> None:
 
     print(f'write: {dst}')
     dst.parent.mkdir(parents=True, exist_ok=True)
@@ -246,7 +247,8 @@ def generate(parser: JsonSchemaParser, dst: pathlib.Path, namespace: str) -> Non
 
     nlohmann_json = dst.parent / (dst.stem + '_nlohmann_json.h')
     with nlohmann_json.open('w') as w:
-        w.write(NLOHMANN_BEGIN.render(namespace=namespace, header_file=dst.name))
+        w.write(
+            NLOHMANN_BEGIN.render(namespace=namespace, header_file=dst.name))
 
         for key, js, parent in parser.schemas:
             enum_values = js.get_enum_values()
@@ -258,17 +260,6 @@ def generate(parser: JsonSchemaParser, dst: pathlib.Path, namespace: str) -> Non
                     'props': [enum_value(value) for value in enum_values],
                     'writes': [],
                     'reads': [enum_read_func(js)]
-                }
-                w.write(NLOHMANN_SERIALIZATION.render(**value_map))
-
-            elif js.title in ['Extension', 'Extras']:
-                if not parent:
-                    raise Exception()
-                value_map = {
-                    'class_name': js.get_class_name(),
-                    'props': [],
-                    'writes': [],
-                    'reads': [],
                 }
                 w.write(NLOHMANN_SERIALIZATION.render(**value_map))
 
@@ -286,6 +277,17 @@ def generate(parser: JsonSchemaParser, dst: pathlib.Path, namespace: str) -> Non
                     [write_func(k, v, js) for k, v in js.properties.items()],
                     'reads':
                     [read_func(k, v, js) for k, v in js.properties.items()]
+                }
+                w.write(NLOHMANN_SERIALIZATION.render(**value_map))
+
+            elif js.title in ['Extension', 'Extras']:
+                if not parent:
+                    raise Exception()
+                value_map = {
+                    'class_name': js.get_class_name(),
+                    'props': [],
+                    'writes': [],
+                    'reads': [],
                 }
                 w.write(NLOHMANN_SERIALIZATION.render(**value_map))
 
