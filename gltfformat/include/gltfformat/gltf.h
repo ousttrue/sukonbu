@@ -6,6 +6,22 @@
 #include <unordered_map>
 
 namespace gltfformat {
+struct KHR_materials_unlitglTFextensionExtension
+{
+};
+
+struct KHR_materials_unlitglTFextensionExtras
+{
+};
+
+struct KHR_materials_unlitglTFextension
+{
+    // Dictionary object with extension-specific objects.
+    std::optional<KHR_materials_unlitglTFextensionExtension> extensions;
+    // Application-specific data.
+    std::optional<KHR_materials_unlitglTFextensionExtras> extras;
+};
+
 enum class AccessorComponentType
 {
     BYTE = 5120,
@@ -819,21 +835,5 @@ struct glTF
     std::optional<glTFExtension> extensions;
     // Application-specific data.
     std::optional<glTFExtras> extras;
-};
-
-struct KHR_materials_unlitglTFextensionExtension
-{
-};
-
-struct KHR_materials_unlitglTFextensionExtras
-{
-};
-
-struct KHR_materials_unlitglTFextension
-{
-    // Dictionary object with extension-specific objects.
-    std::optional<KHR_materials_unlitglTFextensionExtension> extensions;
-    // Application-specific data.
-    std::optional<KHR_materials_unlitglTFextensionExtras> extras;
 };
 } // end of namespace

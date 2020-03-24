@@ -39,8 +39,9 @@ def main():
     print(ex_path)
     ex_parser = JsonSchemaParser(gltf_path.parent)
     ex_parser.process(ex_path)
-    js_parser.root.properties['materials'].items.properties['extensions'].properties['KHR_materials_unlit'] = ex_parser.root
-    js_parser.schemas += ex_parser.schemas
+    js_parser.root.properties['materials'].items.properties[
+        'extensions'].properties['KHR_materials_unlit'] = ex_parser.root
+    js_parser.schemas = ex_parser.schemas + js_parser.schemas
 
     if args.dst:
         dst = pathlib.Path(args.dst)

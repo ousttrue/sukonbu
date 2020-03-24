@@ -29,6 +29,25 @@ struct adl_serializer<std::optional<T>>
 namespace gltfformat {
 using nlohmann::json;
 
+void to_json(json& j, const KHR_materials_unlitglTFextensionExtension & p) {
+}
+void from_json(const json& j, KHR_materials_unlitglTFextensionExtension& p) {
+}
+
+void to_json(json& j, const KHR_materials_unlitglTFextensionExtras & p) {
+}
+void from_json(const json& j, KHR_materials_unlitglTFextensionExtras& p) {
+}
+
+void to_json(json& j, const KHR_materials_unlitglTFextension & p) {
+    
+    
+}
+void from_json(const json& j, KHR_materials_unlitglTFextension& p) {
+    if(j.find("extensions")!=j.end()) j.at("extensions").get_to(p.extensions);
+    if(j.find("extras")!=j.end()) j.at("extras").get_to(p.extras);
+}
+
 void to_json(json& j, const AccessorComponentType & p) {
 }
 void from_json(const json& j, AccessorComponentType& p) {
@@ -918,25 +937,6 @@ void from_json(const json& j, glTF& p) {
     if(j.find("scenes")!=j.end()) j.at("scenes").get_to(p.scenes);
     if(j.find("skins")!=j.end()) j.at("skins").get_to(p.skins);
     if(j.find("textures")!=j.end()) j.at("textures").get_to(p.textures);
-    if(j.find("extensions")!=j.end()) j.at("extensions").get_to(p.extensions);
-    if(j.find("extras")!=j.end()) j.at("extras").get_to(p.extras);
-}
-
-void to_json(json& j, const KHR_materials_unlitglTFextensionExtension & p) {
-}
-void from_json(const json& j, KHR_materials_unlitglTFextensionExtension& p) {
-}
-
-void to_json(json& j, const KHR_materials_unlitglTFextensionExtras & p) {
-}
-void from_json(const json& j, KHR_materials_unlitglTFextensionExtras& p) {
-}
-
-void to_json(json& j, const KHR_materials_unlitglTFextension & p) {
-    
-    
-}
-void from_json(const json& j, KHR_materials_unlitglTFextension& p) {
     if(j.find("extensions")!=j.end()) j.at("extensions").get_to(p.extensions);
     if(j.find("extras")!=j.end()) j.at("extras").get_to(p.extras);
 }
