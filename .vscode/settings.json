@@ -10,5 +10,6 @@
     "python.envFile": "${workspaceFolder}/.env",
     "files.associations": {
         "optional": "cpp"
-    }
+    },
+    "workbench.colorTheme": "Monokai Dimmed"
 }

@@ -25,7 +25,7 @@ So I made this.
 * [ ] (WIP)D generator
 * [ ] C# generator
 * [x] (WIP)C++ generator
-* [ ] manipulate Extensions and Extras
+* [x] manipulate Extensions and Extras
 
 ### Usage
 
@@ -34,6 +34,15 @@ $ python -m sukonbu.cli PATH_TO_GLTF_JSONSCHEMA --lang python --dst PATH_TO_GENE
 ```
 
 ### examples
+
+#### extension handling
+
+```py
+    unlit_path = gltf_path.parent.parent.parent.parent / 'extensions/2.0/Khronos/KHR_materials_unlit/schema/gltf.KHR_materials_unlit.schema.json'
+    unlit = JsonSchemaParser(gltf_path.parent)
+    unlit.process(unlit_path)
+    js_parser.set('materials[].extensions.KHR_materials_unlit', unlit)
+```
 
 #### python3 with typing
 

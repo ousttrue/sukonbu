@@ -67,7 +67,8 @@ class JsonSchemaParser:
 
         return traverse(root)
 
-    def get_or_read_ref(self, dir: pathlib.Path, filename: str) -> dict:
+    def get_or_read_ref(self, dir: pathlib.Path, filename: str,
+                        current: List[str]) -> dict:
         path = dir / filename
         if not path.exists():
             path = self.dir / filename
@@ -77,26 +78,36 @@ class JsonSchemaParser:
         #     return ref
         text = path.read_text()
         ref_parsed = json.loads(text)
-        ref = self.preprocess(ref_parsed, path.parent)
+        ref = self.preprocess(ref_parsed, path.parent, current)
         self.path_map[path] = ref
         ref['path'] = path
         return ref
 
-    def preprocess(self, parsed: dict, directory: pathlib.Path):
+    def preprocess(self, parsed: dict, directory: pathlib.Path,
+                   current: List[str]):
+        '''
+        * `$ref` などを展開して１つの json に連結する
+        * allOf を継承と見なして親 JsonSchema の属性を展開する
+        * anyOf はひとつめの type と見なす(gltf では enum的に使われる)
+        * properties は class として階層化する
+        * items は list として階層化する
+        * additionalProperties は dict として階層化する
+        '''
         if '$schema' in parsed:
             del parsed['$schema']
 
         if '$ref' in parsed:
             # replace
             # print(path)
-            ref = self.get_or_read_ref(directory, parsed['$ref'])
+            ref = self.get_or_read_ref(directory, parsed['$ref'], current)
             for k, v in ref.items():
                 parsed[k] = v
             del parsed['$ref']
 
         if 'allOf' in parsed:
             # inherited
-            ref = self.get_or_read_ref(directory, parsed['allOf'][0]['$ref'])
+            ref = self.get_or_read_ref(directory, parsed['allOf'][0]['$ref'],
+                                       current)
             for k, v in ref.items():
                 if k in parsed:
                     if k == 'properties':
@@ -123,11 +134,13 @@ class JsonSchemaParser:
         for key in keys:
             if key == 'properties':
                 for k, v in parsed[key].items():
-                    self.preprocess(v, directory)
+                    self.preprocess(v, directory, current + [k])
             elif key == 'items':
-                parsed[key] = self.preprocess(parsed[key], directory)
+                parsed[key] = self.preprocess(parsed[key], directory,
+                                              current + ['_'])
             elif key == 'additionalProperties':
-                parsed[key] = self.preprocess(parsed[key], directory)
+                parsed[key] = self.preprocess(parsed[key], directory,
+                                              current + ['_'])
             elif key in [
                     'path',
                     'title',
@@ -137,6 +150,8 @@ class JsonSchemaParser:
                     'gltf_webgl',
                     'gltf_uriType',
                     'default',
+                    #
+                    'enum',
                     #
                     'additionalProperties',
                     'minProperties',
@@ -162,13 +177,18 @@ class JsonSchemaParser:
             else:
                 raise Exception(f'unknown {key}')
 
+        if 'title' not in parsed:
+            parsed['title'] = '.'.join(current)
+        elif current and parsed['title'] in ('Extensins', 'Extras'):
+            parsed['title'] = '.'.join(current + [parsed['title']])
+
         return parsed
 
     def process(self, entry_point: pathlib.Path):
         print(entry_point)
         text = entry_point.read_text()
         parsed = json.loads(text)
-        processed = self.preprocess(parsed, entry_point.parent)
+        processed = self.preprocess(parsed, entry_point.parent, [])
         self.root = self.from_dict(processed)
 
         if self.root:

@@ -61,9 +61,6 @@ def js_to_pythontype(name: str, js: JsonSchema, parent: JsonSchema) -> str:
     * array => List[T]
     * else => Optional[T]
     '''
-    if js.title == 'Extension':
-        return 'Dict[str, Any]'
-
     enum_values = js.get_enum_values()
     if enum_values:
         return js.title
@@ -206,6 +203,5 @@ from enum import Enum
         w.write('''
 
 if __name__ == '__main__':
-    gltf = glTF()
-    print(gltf)
+    pass
 ''')

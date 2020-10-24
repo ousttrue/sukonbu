@@ -17,6 +17,7 @@ class JsonSchema(NamedTuple):
     properties: Dict[str, Any] = {}
     oneOf: Any = None
     anyOf: Any = None
+    enum: Any = None
     #
     additionalProperties: Any = None
     minProperties: Any = None
@@ -72,7 +73,12 @@ class JsonSchema(NamedTuple):
                 'null', 'bool', 'int', 'number', 'string', 'object', 'array'
         ]:
             if self.properties:
-                return self.title.replace(' ', '')
+                title = self.title
+                if '.' in self.title:
+                    splited = self.title.split('.')
+                    title = ''.join(s[0].upper() + s[1:] for s in splited)
+                return title.replace(' ', '')
+
         return self.type
 
     def set(self, json_path: str, schema):
