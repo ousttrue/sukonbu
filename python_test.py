@@ -1,14 +1,16 @@
 import unittest
 import pathlib
 import json
+import os
 from generated.python import sukonbu_gltf
+GLTF_SAMPLE_MODLES = pathlib.Path(
+    os.getenv('GLTF_SAMPLE_MODELS'))  # type: ignore
 HERE = pathlib.Path(__file__).absolute().parent
 
 
 class SukonbuGltfTest(unittest.TestCase):
-
     def test_read(self) -> None:
-        path = HERE / "glTF-Sample-Models/2.0/Avocado/glTF/Avocado.gltf"
+        path = GLTF_SAMPLE_MODLES / "2.0/Avocado/glTF/Avocado.gltf"
         # print(gltf, gltf.exists())
         with open(path) as r:
             json_bytes = r.read()
