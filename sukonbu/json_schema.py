@@ -14,7 +14,7 @@ class JsonSchema(NamedTuple):
     default: Any = None
     gltf_webgl: Any = None
     gltf_uriType: Any = None
-    properties: Dict[str, Any] = {}
+    properties: Dict[str, Any] = None
     oneOf: Any = None
     anyOf: Any = None
     enum: Any = None
@@ -32,8 +32,8 @@ class JsonSchema(NamedTuple):
     exclusiveMinimum: Any = None
     multipleOf: Any = None
     #
-    dependencies: List[Any] = []
-    required: List[Any] = []
+    dependencies: List[Any] = None
+    required: List[Any] = None
 
     def get_enum_values(self) -> List[Any]:
         if self.anyOf:
@@ -70,7 +70,7 @@ class JsonSchema(NamedTuple):
 
     def get_class_name(self):
         if self.type in [
-                'null', 'bool', 'int', 'number', 'string', 'object', 'array'
+                'null', 'bool', 'int', 'number', 'string', 'object', 'array', 'unknown',
         ]:
             if self.properties:
                 title = self.title
@@ -91,11 +91,12 @@ class JsonSchema(NamedTuple):
 
         # recursive
         tail = m[2]
+        child = self.properties[head]
         if m[2].startswith('.'):
             tail = m[2][1:]
-            self.properties[head].set(tail, schema)
+            child.set(tail, schema)
         elif tail.startswith('[]'):
             tail = m[2][3:]
-            self.properties[head].items.set(tail, schema)
+            child.items.set(tail, schema)
         else:
             raise NotImplementedError()

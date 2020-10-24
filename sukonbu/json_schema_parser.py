@@ -25,19 +25,6 @@ class JsonSchemaParser:
         def traverse(node: dict,
                      parent: Optional[dict] = None,
                      key: Optional[str] = None) -> JsonSchema:
-            if parent and 'title' in node and node['title'] in [
-                    'Extension', 'Extras'
-            ]:
-                node['type'] = parent['title'].replace(' ', '') + node['title']
-                if 'additionalProperties' in node:
-                    del node['additionalProperties']
-                return JsonSchema(**node)
-
-            path = node.get('path')
-            if path:
-                if path in self.schema_map:
-                    return self.schema_map[path]
-
             # pass replace leaf to JsonSchema
             props = node.get('properties')
             if props:
@@ -60,10 +47,10 @@ class JsonSchemaParser:
                 node['title'] = parent['title'].replace(
                     ' ', '') + key[0:1].upper() + key[1:]
 
-            js = JsonSchema(**node)
-            if path:
-                self.schema_map[path] = js
-            return js
+            if 'properties' not in node: node['properties'] = {}
+            if 'dependencies' not in node: node['dependencies'] = []
+            if 'required' not in node: node['required'] = []
+            return JsonSchema(**node)
 
         return traverse(root)
 
@@ -179,8 +166,11 @@ class JsonSchemaParser:
 
         if 'title' not in parsed:
             parsed['title'] = '.'.join(current)
-        elif current and parsed['title'] in ('Extensins', 'Extras'):
-            parsed['title'] = '.'.join(current + [parsed['title']])
+        elif current:
+            if parsed['title'] == 'Extension':
+                parsed['title'] = '.'.join(current + [parsed['title']])
+            elif parsed['title'] == 'Extras':
+                parsed['title'] = '.'.join(current)
 
         return parsed
 
@@ -191,21 +181,36 @@ class JsonSchemaParser:
         processed = self.preprocess(parsed, entry_point.parent, [])
         self.root = self.from_dict(processed)
 
-        if self.root:
+        # extras = self.root.properties['meshes'].items.properties['extras']
+        # extras.properties['some'] = 1
+        # a = 0
 
-            used: List[JsonSchema] = []
+        # if self.root:
 
-            def traverse(name: str, js: JsonSchema,
-                         parent: Optional[JsonSchema]):
-                for k, v in js.properties.items():
-                    traverse(k, v, js)
-                if js.items:
-                    traverse('[]', js.items, js)
-                if js not in used:
-                    self.schemas.append(JsonSchemaItem(name, js, parent))
-                    used.append(js)
+        #     used: List[JsonSchema] = []
+        #     class_names: List[str] = []
 
-            traverse('', self.root, None)
+        #     def traverse(name: str, js: JsonSchema,
+        #                  parent: Optional[JsonSchema]):
+        #         for k, v in js.properties.items():
+        #             traverse(k, v, js)
+        #         if js.items:
+        #             traverse('[]', js.items, js)
+        #         if js not in used:
+        #             if js.get_enum_values():
+        #                 self.schemas.append(JsonSchemaItem(name, js, parent))
+        #                 used.append(js)
+        #             elif js.properties:
+        #                 name = js.get_class_name()
+        #                 if name in class_names:
+        #                     # skip duplicate class
+        #                     pass
+        #                 else:
+        #                     self.schemas.append(
+        #                         JsonSchemaItem(name, js, parent))
+        #                     class_names.append(name)
+
+        #     traverse('', self.root, None)
 
     def print(self) -> None:
         for key, js in self.schema_map.items():

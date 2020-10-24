@@ -2,7 +2,7 @@ import pathlib
 from typing import List, Tuple, Optional
 from jinja2 import Template
 from ..json_schema import JsonSchema
-from ..json_schema_parser import JsonSchemaParser
+from ..json_schema_parser import JsonSchemaItem, JsonSchemaParser
 
 PYTHON_ENUM = Template('''
 
@@ -75,11 +75,11 @@ def js_to_pythontype(name: str, js: JsonSchema, parent: JsonSchema) -> str:
         return 'str'
     elif js.type == 'array':
         return f'List[{js_to_pythontype(name, js.items, js)}]'
-    elif js.type == 'unknown':
-        return 'Dict[str, Any]'
+    # elif js.type == 'unknown':
+    #     return 'Dict[str, Any]'
     else:  # js.type == 'object' or else
-        if js.properties and js.additionalProperties:
-            raise Exception()
+        # if js.properties and js.additionalProperties:
+        #     raise Exception()
         if js.properties:
             return js.get_class_name()
         elif js.additionalProperties:
@@ -160,7 +160,10 @@ def enum_value(src: str) -> str:
         return f'{escape_enum(splitted[0])} = "{splitted[0]}"'
 
 
-def generate(self: JsonSchemaParser, dst: pathlib.Path) -> None:
+def generate(parser: JsonSchemaParser, dst: pathlib.Path) -> None:
+    if not parser.root:
+        return
+
     print(f'write: {dst}')
     dst.parent.mkdir(parents=True, exist_ok=True)
     with dst.open('w') as w:
@@ -169,11 +172,35 @@ def generate(self: JsonSchemaParser, dst: pathlib.Path) -> None:
 from typing import NamedTuple, List, Any, Optional, Dict
 from enum import Enum
 ''')
-        for key, js, parent in self.schemas:
+
+        def enum_schema(_js: JsonSchema):
+            if _js.properties:
+                for k, v in _js.properties.items():
+                    # print(k)
+                    for x in enum_schema(v):
+                        yield x
+                yield _js
+
+            elif _js.items:
+                for x in enum_schema(_js.items):
+                    yield x
+                yield _js
+
+            elif _js.additionalProperties:
+                for x in enum_schema(_js.additionalProperties):
+                    yield x
+
+            elif _js.get_enum_values():
+                yield _js
+
+        used = {}
+
+        for js in enum_schema(parser.root):
+            # for key, js, parent in parser.schemas:
             enum_values = js.get_enum_values()
             if enum_values:
-                if not parent:
-                    raise Exception()
+                # if not parent:
+                #     raise Exception()
                 value_map = {
                     'class_name':
                     js.title,
@@ -184,13 +211,17 @@ from enum import Enum
                 w.write(PYTHON_ENUM.render(**value_map))
 
             elif js.properties:
+                name = js.get_class_name()
+                if name in used:
+                    continue
+                used[name] = True
                 props = [(
                     v.description,
                     f'{k}: {add_optional(js_to_pythontype(k, v, js), k in js.required)}'
                 ) for k, v in js.properties.items()]
                 value_map = {
                     'class_name':
-                    js.get_class_name(),
+                    name,
                     'props':
                     sorted(props, key=lambda x: '=' in x[1]),
                     'writes':
