@@ -2,3 +2,4 @@
 *.pyc
 /build/
 /gltfformat/build/
+__pycache__

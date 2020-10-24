@@ -172,7 +172,7 @@ def generate(self: JsonSchemaParser, dst: pathlib.Path) -> None:
 from typing import NamedTuple, List, Any, Optional, Dict
 from enum import Enum
 ''')
-        for key, js, parent in schemas:
+        for key, js, parent in self.schemas:
             enum_values = js.get_enum_values()
             if enum_values:
                 if not parent:
