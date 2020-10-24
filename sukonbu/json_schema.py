@@ -1,5 +1,8 @@
 from typing import NamedTuple, Any, Optional, List, Dict
 import pathlib
+import re
+
+JS_PATH_EXTRACT = re.compile(r'^(\w+)(.*)')
 
 
 class JsonSchema(NamedTuple):
@@ -71,3 +74,22 @@ class JsonSchema(NamedTuple):
             if self.properties:
                 return self.title.replace(' ', '')
         return self.type
+
+    def set(self, json_path: str, schema):
+        print(json_path)
+        m = JS_PATH_EXTRACT.match(json_path)
+        head = m[1]
+        if not m[2]:
+            self.properties[head] = schema
+            return
+
+        # recursive
+        tail = m[2]
+        if m[2].startswith('.'):
+            tail = m[2][1:]
+            self.properties[head].set(tail, schema)
+        elif tail.startswith('[]'):
+            tail = m[2][3:]
+            self.properties[head].items.set(tail, schema)
+        else:
+            raise NotImplementedError()

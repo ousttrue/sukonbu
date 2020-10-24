@@ -194,3 +194,12 @@ class JsonSchemaParser:
             for k, v in js.properties.items():
                 print(f'  {k}: {v}')
             print('}')
+
+    def set(self, json_path: str, ex_parser: 'JsonSchemaParser'):
+        '''
+        extension を 継ぎ足す
+        '''
+        if not ex_parser.root:
+            return
+        self.root.set(json_path, ex_parser.root)
+        self.schemas = ex_parser.schemas + self.schemas
