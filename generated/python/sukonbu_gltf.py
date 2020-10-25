@@ -53,14 +53,14 @@ class AccessorSparseIndicesComponentType(Enum):
 
 
 class AccessorSparseIndices(NamedTuple):
-    # The index of the bufferView.
+    # The index of the bufferView with sparse indices. Referenced bufferView can't have ARRAY_BUFFER or ELEMENT_ARRAY_BUFFER target.
     bufferView: int
     # The indices data type.
     componentType: AccessorSparseIndicesComponentType
     # The offset relative to the start of the bufferView in bytes. Must be aligned.
     byteOffset: Optional[int] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -79,18 +79,18 @@ class AccessorSparseIndices(NamedTuple):
         if "bufferView" in src: dst["bufferView"] = src["bufferView"] # noqa copy
         if "byteOffset" in src: dst["byteOffset"] = src["byteOffset"] # noqa copy
         if "componentType" in src: dst["componentType"] = AccessorSparseIndicesComponentType(src["componentType"]) # noqa
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return AccessorSparseIndices(**dst)
 
 
 class AccessorSparseValues(NamedTuple):
-    # The index of the bufferView.
+    # The index of the bufferView with sparse values. Referenced bufferView can't have ARRAY_BUFFER or ELEMENT_ARRAY_BUFFER target.
     bufferView: int
     # The offset relative to the start of the bufferView in bytes. Must be aligned.
     byteOffset: Optional[int] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -107,8 +107,8 @@ class AccessorSparseValues(NamedTuple):
         dst = {}
         if "bufferView" in src: dst["bufferView"] = src["bufferView"] # noqa copy
         if "byteOffset" in src: dst["byteOffset"] = src["byteOffset"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return AccessorSparseValues(**dst)
 
 
@@ -120,7 +120,7 @@ class AccessorSparse(NamedTuple):
     # Array of size `accessor.sparse.count` times number of components storing the displaced accessor attributes pointed by `accessor.sparse.indices`.
     values: AccessorSparseValues
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -139,8 +139,8 @@ class AccessorSparse(NamedTuple):
         if "count" in src: dst["count"] = src["count"] # noqa copy
         if "indices" in src: dst["indices"] = AccessorSparseIndices.from_dict(src["indices"]) # noqa
         if "values" in src: dst["values"] = AccessorSparseValues.from_dict(src["values"]) # noqa
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return AccessorSparse(**dst)
 
 
@@ -166,7 +166,7 @@ class Accessor(NamedTuple):
     # The user-defined name of this object.
     name: Optional[str] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -199,8 +199,8 @@ class Accessor(NamedTuple):
         dst["min"] = src.get("min", [])
         if "sparse" in src: dst["sparse"] = AccessorSparse.from_dict(src["sparse"]) # noqa
         if "name" in src: dst["name"] = src["name"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return Accessor(**dst)
 
 
@@ -222,10 +222,10 @@ class AnimationChannelTargetPath(Enum):
 class AnimationChannelTarget(NamedTuple):
     # The name of the node's TRS property to modify, or the "weights" of the Morph Targets it instantiates. For the "translation" property, the values that are provided by the sampler are the translation along the x, y, and z axes. For the "rotation" property, the values are a quaternion in the order (x, y, z, w), where w is the scalar. For the "scale" property, the values are the scaling factors along the x, y, and z axes.
     path: AnimationChannelTargetPath
-    # The index of the bufferView.
+    # The index of the node to target.
     node: Optional[int] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -242,18 +242,18 @@ class AnimationChannelTarget(NamedTuple):
         dst = {}
         if "node" in src: dst["node"] = src["node"] # noqa copy
         if "path" in src: dst["path"] = AnimationChannelTargetPath(src["path"]) # noqa
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return AnimationChannelTarget(**dst)
 
 
 class AnimationChannel(NamedTuple):
-    # The index of the bufferView.
+    # The index of a sampler in this animation used to compute the value for the target.
     sampler: int
     # The index of the node and TRS property that an animation channel targets.
     target: AnimationChannelTarget
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -270,8 +270,8 @@ class AnimationChannel(NamedTuple):
         dst = {}
         if "sampler" in src: dst["sampler"] = src["sampler"] # noqa copy
         if "target" in src: dst["target"] = AnimationChannelTarget.from_dict(src["target"]) # noqa
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return AnimationChannel(**dst)
 
 
@@ -290,14 +290,14 @@ class AnimationSamplerInterpolation(Enum):
 
 
 class AnimationSampler(NamedTuple):
-    # The index of the bufferView.
+    # The index of an accessor containing keyframe input values, e.g., time.
     input: int
-    # The index of the bufferView.
+    # The index of an accessor, containing keyframe output values.
     output: int
     # Interpolation algorithm.
     interpolation: Optional[AnimationSamplerInterpolation] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -316,8 +316,8 @@ class AnimationSampler(NamedTuple):
         if "input" in src: dst["input"] = src["input"] # noqa copy
         if "interpolation" in src: dst["interpolation"] = AnimationSamplerInterpolation(src["interpolation"]) # noqa
         if "output" in src: dst["output"] = src["output"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return AnimationSampler(**dst)
 
 
@@ -329,7 +329,7 @@ class Animation(NamedTuple):
     # The user-defined name of this object.
     name: Optional[str] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -348,8 +348,8 @@ class Animation(NamedTuple):
         dst["channels"] = [AnimationChannel.from_dict(item) for item in src["channels"]] if "channels" in src else [] # noqa
         dst["samplers"] = [AnimationSampler.from_dict(item) for item in src["samplers"]] if "samplers" in src else [] # noqa
         if "name" in src: dst["name"] = src["name"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return Animation(**dst)
 
 
@@ -363,7 +363,7 @@ class Asset(NamedTuple):
     # The minimum glTF version that this asset targets.
     minVersion: Optional[str] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -384,8 +384,8 @@ class Asset(NamedTuple):
         if "generator" in src: dst["generator"] = src["generator"] # noqa copy
         if "version" in src: dst["version"] = src["version"] # noqa copy
         if "minVersion" in src: dst["minVersion"] = src["minVersion"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return Asset(**dst)
 
 
@@ -397,7 +397,7 @@ class Buffer(NamedTuple):
     # The user-defined name of this object.
     name: Optional[str] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -416,8 +416,8 @@ class Buffer(NamedTuple):
         if "uri" in src: dst["uri"] = src["uri"] # noqa copy
         if "byteLength" in src: dst["byteLength"] = src["byteLength"] # noqa copy
         if "name" in src: dst["name"] = src["name"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return Buffer(**dst)
 
 
@@ -435,7 +435,7 @@ class BufferViewTarget(Enum):
 
 
 class BufferView(NamedTuple):
-    # The index of the bufferView.
+    # The index of the buffer.
     buffer: int
     # The total byte length of the buffer view.
     byteLength: int
@@ -448,7 +448,7 @@ class BufferView(NamedTuple):
     # The user-defined name of this object.
     name: Optional[str] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -473,8 +473,8 @@ class BufferView(NamedTuple):
         if "byteStride" in src: dst["byteStride"] = src["byteStride"] # noqa copy
         if "target" in src: dst["target"] = BufferViewTarget(src["target"]) # noqa
         if "name" in src: dst["name"] = src["name"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return BufferView(**dst)
 
 
@@ -488,7 +488,7 @@ class CameraOrthographic(NamedTuple):
     # The floating-point distance to the near clipping plane.
     znear: float
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -509,8 +509,8 @@ class CameraOrthographic(NamedTuple):
         if "ymag" in src: dst["ymag"] = src["ymag"] # noqa copy
         if "zfar" in src: dst["zfar"] = src["zfar"] # noqa copy
         if "znear" in src: dst["znear"] = src["znear"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return CameraOrthographic(**dst)
 
 
@@ -524,7 +524,7 @@ class CameraPerspective(NamedTuple):
     # The floating-point distance to the far clipping plane.
     zfar: Optional[float] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -545,8 +545,8 @@ class CameraPerspective(NamedTuple):
         if "yfov" in src: dst["yfov"] = src["yfov"] # noqa copy
         if "zfar" in src: dst["zfar"] = src["zfar"] # noqa copy
         if "znear" in src: dst["znear"] = src["znear"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return CameraPerspective(**dst)
 
 
@@ -573,7 +573,7 @@ class Camera(NamedTuple):
     # The user-defined name of this object.
     name: Optional[str] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -594,8 +594,8 @@ class Camera(NamedTuple):
         if "perspective" in src: dst["perspective"] = CameraPerspective.from_dict(src["perspective"]) # noqa
         if "type" in src: dst["type"] = CameraType(src["type"]) # noqa
         if "name" in src: dst["name"] = src["name"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return Camera(**dst)
 
 
@@ -617,12 +617,12 @@ class Image(NamedTuple):
     uri: Optional[str] = None
     # The image's MIME type. Required if `bufferView` is defined.
     mimeType: Optional[ImageMimeType] = None
-    # The index of the bufferView.
+    # The index of the bufferView that contains the image. Use this instead of the image's uri property.
     bufferView: Optional[int] = None
     # The user-defined name of this object.
     name: Optional[str] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -643,18 +643,54 @@ class Image(NamedTuple):
         if "mimeType" in src: dst["mimeType"] = ImageMimeType(src["mimeType"]) # noqa
         if "bufferView" in src: dst["bufferView"] = src["bufferView"] # noqa copy
         if "name" in src: dst["name"] = src["name"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return Image(**dst)
 
 
+class KHR_materials_unlitglTFextension(NamedTuple):
+    # Dictionary object with extension-specific objects.
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
+    # Application-specific data.
+    extras: Optional[Dict[str, Any]] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        d: Dict[str, Any] = {}
+        if self.extensions is not None: d["extensions"] = self.extensions # noqa
+        if self.extras is not None: d["extras"] = self.extras # noqa
+        return d
+
+    @staticmethod
+    def from_dict(src: dict) -> 'KHR_materials_unlitglTFextension':
+        dst = {}
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
+        return KHR_materials_unlitglTFextension(**dst)
+
+
+class Materials_ExtensionsExtension(NamedTuple):
+    # glTF extension that defines the unlit material model.
+    KHR_materials_unlit: Optional[KHR_materials_unlitglTFextension] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        d: Dict[str, Any] = {}
+        if self.KHR_materials_unlit is not None: d["KHR_materials_unlit"] = self.KHR_materials_unlit.to_dict() # noqa
+        return d
+
+    @staticmethod
+    def from_dict(src: dict) -> 'Materials_ExtensionsExtension':
+        dst = {}
+        if "KHR_materials_unlit" in src: dst["KHR_materials_unlit"] = KHR_materials_unlitglTFextension.from_dict(src["KHR_materials_unlit"]) # noqa
+        return Materials_ExtensionsExtension(**dst)
+
+
 class TextureInfo(NamedTuple):
-    # The index of the bufferView.
+    # The index of the texture.
     index: int
     # The set index of texture's TEXCOORD attribute used for texture coordinate mapping.
     texCoord: Optional[int] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -671,8 +707,8 @@ class TextureInfo(NamedTuple):
         dst = {}
         if "index" in src: dst["index"] = src["index"] # noqa copy
         if "texCoord" in src: dst["texCoord"] = src["texCoord"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return TextureInfo(**dst)
 
 
@@ -688,7 +724,7 @@ class MaterialPBRMetallicRoughness(NamedTuple):
     # Reference to a texture.
     metallicRoughnessTexture: Optional[TextureInfo] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -711,20 +747,20 @@ class MaterialPBRMetallicRoughness(NamedTuple):
         if "metallicFactor" in src: dst["metallicFactor"] = src["metallicFactor"] # noqa copy
         if "roughnessFactor" in src: dst["roughnessFactor"] = src["roughnessFactor"] # noqa copy
         if "metallicRoughnessTexture" in src: dst["metallicRoughnessTexture"] = TextureInfo.from_dict(src["metallicRoughnessTexture"]) # noqa
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return MaterialPBRMetallicRoughness(**dst)
 
 
 class MaterialNormalTextureInfo(NamedTuple):
-    # The index of the bufferView.
+    # The index of the texture.
     index: int
     # The set index of texture's TEXCOORD attribute used for texture coordinate mapping.
     texCoord: Optional[int] = None
     # The scalar multiplier applied to each normal vector of the normal texture.
     scale: Optional[float] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -743,20 +779,20 @@ class MaterialNormalTextureInfo(NamedTuple):
         if "index" in src: dst["index"] = src["index"] # noqa copy
         if "texCoord" in src: dst["texCoord"] = src["texCoord"] # noqa copy
         if "scale" in src: dst["scale"] = src["scale"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return MaterialNormalTextureInfo(**dst)
 
 
 class MaterialOcclusionTextureInfo(NamedTuple):
-    # The index of the bufferView.
+    # The index of the texture.
     index: int
     # The set index of texture's TEXCOORD attribute used for texture coordinate mapping.
     texCoord: Optional[int] = None
     # A scalar multiplier controlling the amount of occlusion applied.
     strength: Optional[float] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -775,8 +811,8 @@ class MaterialOcclusionTextureInfo(NamedTuple):
         if "index" in src: dst["index"] = src["index"] # noqa copy
         if "texCoord" in src: dst["texCoord"] = src["texCoord"] # noqa copy
         if "strength" in src: dst["strength"] = src["strength"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return MaterialOcclusionTextureInfo(**dst)
 
 
@@ -798,7 +834,7 @@ class Material(NamedTuple):
     # The user-defined name of this object.
     name: Optional[str] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Materials_ExtensionsExtension] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
     # A set of parameter values that are used to define the metallic-roughness material model from Physically-Based Rendering (PBR) methodology.
@@ -821,7 +857,7 @@ class Material(NamedTuple):
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
         if self.name is not None: d["name"] = self.name # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
+        if self.extensions is not None: d["extensions"] = self.extensions.to_dict() # noqa
         if self.extras is not None: d["extras"] = self.extras # noqa
         if self.pbrMetallicRoughness is not None: d["pbrMetallicRoughness"] = self.pbrMetallicRoughness.to_dict() # noqa
         if self.normalTexture is not None: d["normalTexture"] = self.normalTexture.to_dict() # noqa
@@ -837,8 +873,8 @@ class Material(NamedTuple):
     def from_dict(src: dict) -> 'Material':
         dst = {}
         if "name" in src: dst["name"] = src["name"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        if "extensions" in src: dst["extensions"] = Materials_ExtensionsExtension.from_dict(src["extensions"]) # noqa
+        dst["extras"] = src.get("extras", {})
         if "pbrMetallicRoughness" in src: dst["pbrMetallicRoughness"] = MaterialPBRMetallicRoughness.from_dict(src["pbrMetallicRoughness"]) # noqa
         if "normalTexture" in src: dst["normalTexture"] = MaterialNormalTextureInfo.from_dict(src["normalTexture"]) # noqa
         if "occlusionTexture" in src: dst["occlusionTexture"] = MaterialOcclusionTextureInfo.from_dict(src["occlusionTexture"]) # noqa
@@ -871,16 +907,16 @@ class MeshPrimitiveMode(Enum):
 class MeshPrimitive(NamedTuple):
     # A dictionary object, where each key corresponds to mesh attribute semantic and each value is the index of the accessor containing attribute's data.
     attributes: Dict[str, int]
-    # The index of the bufferView.
+    # The index of the accessor that contains the indices.
     indices: Optional[int] = None
-    # The index of the bufferView.
+    # The index of the material to apply to this primitive when rendering.
     material: Optional[int] = None
     # The type of primitives to render.
     mode: Optional[MeshPrimitiveMode] = None
     # An array of Morph Targets, each  Morph Target is a dictionary mapping attributes (only `POSITION`, `NORMAL`, and `TANGENT` supported) to their deviations in the Morph Target.
     targets: Optional[List[Dict[str, int]]] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -903,8 +939,8 @@ class MeshPrimitive(NamedTuple):
         if "material" in src: dst["material"] = src["material"] # noqa copy
         if "mode" in src: dst["mode"] = MeshPrimitiveMode(src["mode"]) # noqa
         dst["targets"] = src.get("targets", [])
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return MeshPrimitive(**dst)
 
 
@@ -916,7 +952,7 @@ class Mesh(NamedTuple):
     # The user-defined name of this object.
     name: Optional[str] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -935,21 +971,21 @@ class Mesh(NamedTuple):
         dst["primitives"] = [MeshPrimitive.from_dict(item) for item in src["primitives"]] if "primitives" in src else [] # noqa
         dst["weights"] = src.get("weights", [])
         if "name" in src: dst["name"] = src["name"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return Mesh(**dst)
 
 
 class Node(NamedTuple):
-    # The index of the bufferView.
+    # The index of the camera referenced by this node.
     camera: Optional[int] = None
     # The indices of this node's children.
     children: Optional[List[int]] = None
-    # The index of the bufferView.
+    # The index of the skin referenced by this node.
     skin: Optional[int] = None
     # A floating-point 4x4 transformation matrix stored in column-major order.
     matrix: Optional[List[float]] = None
-    # The index of the bufferView.
+    # The index of the mesh in this node.
     mesh: Optional[int] = None
     # The node's unit quaternion rotation in the order (x, y, z, w), where w is the scalar.
     rotation: Optional[List[float]] = None
@@ -962,7 +998,7 @@ class Node(NamedTuple):
     # The user-defined name of this object.
     name: Optional[str] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -995,8 +1031,8 @@ class Node(NamedTuple):
         dst["translation"] = src.get("translation", [])
         dst["weights"] = src.get("weights", [])
         if "name" in src: dst["name"] = src["name"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return Node(**dst)
 
 
@@ -1070,7 +1106,7 @@ class Sampler(NamedTuple):
     # The user-defined name of this object.
     name: Optional[str] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -1093,8 +1129,8 @@ class Sampler(NamedTuple):
         if "wrapS" in src: dst["wrapS"] = SamplerWrapS(src["wrapS"]) # noqa
         if "wrapT" in src: dst["wrapT"] = SamplerWrapT(src["wrapT"]) # noqa
         if "name" in src: dst["name"] = src["name"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return Sampler(**dst)
 
 
@@ -1104,7 +1140,7 @@ class Scene(NamedTuple):
     # The user-defined name of this object.
     name: Optional[str] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -1121,22 +1157,22 @@ class Scene(NamedTuple):
         dst = {}
         dst["nodes"] = src.get("nodes", [])
         if "name" in src: dst["name"] = src["name"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return Scene(**dst)
 
 
 class Skin(NamedTuple):
     # Indices of skeleton nodes, used as joints in this skin.
     joints: List[int]
-    # The index of the bufferView.
+    # The index of the accessor containing the floating-point 4x4 inverse-bind matrices.  The default is that each matrix is a 4x4 identity matrix, which implies that inverse-bind matrices were pre-applied.
     inverseBindMatrices: Optional[int] = None
-    # The index of the bufferView.
+    # The index of the node used as a skeleton root.
     skeleton: Optional[int] = None
     # The user-defined name of this object.
     name: Optional[str] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -1157,20 +1193,20 @@ class Skin(NamedTuple):
         if "skeleton" in src: dst["skeleton"] = src["skeleton"] # noqa copy
         dst["joints"] = src.get("joints", [])
         if "name" in src: dst["name"] = src["name"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return Skin(**dst)
 
 
 class Texture(NamedTuple):
-    # The index of the bufferView.
+    # The index of the sampler used by this texture. When undefined, a sampler with repeat wrapping and auto filtering should be used.
     sampler: Optional[int] = None
-    # The index of the bufferView.
+    # The index of the image used by this texture. When undefined, it is expected that an extension or other mechanism will supply an alternate texture source, otherwise behavior is undefined.
     source: Optional[int] = None
     # The user-defined name of this object.
     name: Optional[str] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -1189,8 +1225,8 @@ class Texture(NamedTuple):
         if "sampler" in src: dst["sampler"] = src["sampler"] # noqa copy
         if "source" in src: dst["source"] = src["source"] # noqa copy
         if "name" in src: dst["name"] = src["name"] # noqa copy
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return Texture(**dst)
 
 
@@ -1221,7 +1257,7 @@ class glTF(NamedTuple):
     nodes: Optional[List[Node]] = None
     # An array of samplers.
     samplers: Optional[List[Sampler]] = None
-    # The index of the bufferView.
+    # The index of the default scene.
     scene: Optional[int] = None
     # An array of scenes.
     scenes: Optional[List[Scene]] = None
@@ -1230,7 +1266,7 @@ class glTF(NamedTuple):
     # An array of textures.
     textures: Optional[List[Texture]] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
 
@@ -1277,11 +1313,10 @@ class glTF(NamedTuple):
         dst["scenes"] = [Scene.from_dict(item) for item in src["scenes"]] if "scenes" in src else [] # noqa
         dst["skins"] = [Skin.from_dict(item) for item in src["skins"]] if "skins" in src else [] # noqa
         dst["textures"] = [Texture.from_dict(item) for item in src["textures"]] if "textures" in src else [] # noqa
-        if "extensions" in src: dst["extensions"] = src["extensions"] # noqa copy
-        if "extras" in src: dst["extras"] = src["extras"] # noqa copy
+        dst["extensions"] = src.get("extensions", {})
+        dst["extras"] = src.get("extras", {})
         return glTF(**dst)
 
 
 if __name__ == '__main__':
-    gltf = glTF()
-    print(gltf)
+    pass
