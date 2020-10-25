@@ -5,35 +5,37 @@ import re
 JS_PATH_EXTRACT = re.compile(r'^(\w+)(.*)')
 
 
-class JsonSchema(NamedTuple):
-    path: Optional[pathlib.Path] = None
-    title: str = ''
-    type: str = 'unknown'
-    description: str = ''
-    gltf_detailedDescription: str = ''
-    default: Any = None
-    gltf_webgl: Any = None
-    gltf_uriType: Any = None
-    properties: Dict[str, Any] = None
-    oneOf: Any = None
-    anyOf: Any = None
-    enum: Any = None
-    #
-    additionalProperties: Any = None
-    minProperties: Any = None
-    items: Any = None
-    uniqueItems: Any = None
-    minItems: Any = None
-    maxItems: Any = None
-    pattern: str = ''
-    format: str = ''
-    minimum: Any = None
-    maximum: Any = None
-    exclusiveMinimum: Any = None
-    multipleOf: Any = None
-    #
-    dependencies: List[Any] = None
-    required: List[Any] = None
+class JsonSchema:
+
+    def __init__(self, **kw):
+        self.path: Optional[pathlib.Path] = kw.get('path')
+        self.title: str = kw.get('title', '')
+        self.type: str = kw.get('type', 'unknown')
+        self.description: str = kw.get('description', '')
+        self.gltf_detailedDescription: str = kw.get('gltf_detailedDescription', '')
+        self.default: Any = kw.get('default')
+        self.gltf_webgl: Any = kw.get('gltf_webgl')
+        self.gltf_uriType: Any = kw.get('gltf_uriType')
+        self.properties: Dict[str, Any] = kw.get('properties', {})
+        self.oneOf: Any = kw.get('oneOf')
+        self.anyOf: Any = kw.get('anyOf')
+        self.enum: Any = kw.get('enum')
+        #
+        self.additionalProperties: Any = kw.get('additionalProperties')
+        self.minProperties: Any = kw.get('minProperties')
+        self.items: Any = kw.get('items')
+        self.uniqueItems: Any = kw.get('uniqueItems')
+        self.minItems: Any = kw.get('minItems')
+        self.maxItems: Any = kw.get('maxItems')
+        self.pattern: str = kw.get('pattern', '')
+        self.format: str = kw.get('format', '')
+        self.minimum: Any = kw.get('minimum')
+        self.maximum: Any = kw.get('maximum')
+        self.exclusiveMinimum: Any = kw.get('exclusiveMinimum')
+        self.multipleOf: Any = kw.get('multipleOf')
+        #
+        self.dependencies: List[Any] = kw.get('dependencies', [])
+        self.required: List[Any] = kw.get('required', [])
 
     def get_enum_values(self) -> List[Any]:
         if self.anyOf:
@@ -70,7 +72,14 @@ class JsonSchema(NamedTuple):
 
     def get_class_name(self):
         if self.type in [
-                'null', 'bool', 'int', 'number', 'string', 'object', 'array', 'unknown',
+                'null',
+                'bool',
+                'int',
+                'number',
+                'string',
+                'object',
+                'array',
+                'unknown',
         ]:
             if self.properties:
                 title = self.title
@@ -82,7 +91,6 @@ class JsonSchema(NamedTuple):
         return self.type
 
     def set(self, json_path: str, schema):
-        print(json_path)
         m = JS_PATH_EXTRACT.match(json_path)
         head = m[1]
         if not m[2]:

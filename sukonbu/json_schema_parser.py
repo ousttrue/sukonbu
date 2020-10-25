@@ -175,7 +175,6 @@ class JsonSchemaParser:
         return parsed
 
     def process(self, entry_point: pathlib.Path):
-        print(entry_point)
         text = entry_point.read_text()
         parsed = json.loads(text)
         processed = self.preprocess(parsed, entry_point.parent, [])
