@@ -164,13 +164,14 @@ class JsonSchemaParser:
 
         if 'title' not in parsed:
             parsed['title'] = '.'.join(current)
-        elif current:
-            if parsed['title'] == 'Extension':
-                # set name to extension
-                parsed['title'] = '.'.join(current)
-            elif parsed['title'] == 'Extras':
-                # set name to extras
-                parsed['title'] = '.'.join(current)
+        if parsed['title'] == 'Extension':
+            # set name to extension
+            if current:
+                parsed['title'] = '.'.join(current[0:-1] + [parsed['title']])
+        elif parsed['title'] == 'Extras':
+            # set name to extras
+            if current:
+                parsed['title'] = '.'.join(current[0:-1] + [parsed['title']])
 
         return parsed
 

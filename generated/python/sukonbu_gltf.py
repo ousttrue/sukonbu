@@ -675,7 +675,7 @@ class KHR_materials_unlitGlTFExtension(NamedTuple):
         return KHR_materials_unlitGlTFExtension(**dst)
 
 
-class materialsItemExtensions(NamedTuple):
+class materialsItemExtension(NamedTuple):
     # glTF extension that defines the unlit material model.
     KHR_materials_unlit: Optional[KHR_materials_unlitGlTFExtension] = None
 
@@ -685,10 +685,10 @@ class materialsItemExtensions(NamedTuple):
         return d
 
     @staticmethod
-    def from_dict(src: dict) -> 'materialsItemExtensions':
+    def from_dict(src: dict) -> 'materialsItemExtension':
         dst = {}
         if "KHR_materials_unlit" in src: dst["KHR_materials_unlit"] = KHR_materials_unlitGlTFExtension.from_dict(src["KHR_materials_unlit"]) # noqa
-        return materialsItemExtensions(**dst)
+        return materialsItemExtension(**dst)
 
 
 class TextureInfo(NamedTuple):
@@ -841,7 +841,7 @@ class Material(NamedTuple):
     # The user-defined name of this object.
     name: Optional[str] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[materialsItemExtensions] = None
+    extensions: Optional[materialsItemExtension] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
     # A set of parameter values that are used to define the metallic-roughness material model from Physically-Based Rendering (PBR) methodology.
@@ -880,7 +880,7 @@ class Material(NamedTuple):
     def from_dict(src: dict) -> 'Material':
         dst = {}
         if "name" in src: dst["name"] = src["name"] # noqa copy
-        if "extensions" in src: dst["extensions"] = materialsItemExtensions.from_dict(src["extensions"]) # noqa
+        if "extensions" in src: dst["extensions"] = materialsItemExtension.from_dict(src["extensions"]) # noqa
         dst["extras"] = src.get("extras", {})
         if "pbrMetallicRoughness" in src: dst["pbrMetallicRoughness"] = MaterialPBRMetallicRoughness.from_dict(src["pbrMetallicRoughness"]) # noqa
         if "normalTexture" in src: dst["normalTexture"] = MaterialNormalTextureInfo.from_dict(src["normalTexture"]) # noqa
