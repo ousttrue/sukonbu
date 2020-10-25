@@ -14,8 +14,6 @@ class JsonSchemaParser:
     def __init__(self, dir: Optional[pathlib.Path] = None):
         self.root: Optional[JsonSchema] = None
         self.path_map = {}
-        self.schema_map: Dict[str, JsonSchema] = {}
-        self.schemas: List[JsonSchemaItem] = []
         self.dir: Optional[pathlib.Path] = dir
 
     def from_dict(self, root: dict) -> 'JsonSchema':
@@ -180,45 +178,6 @@ class JsonSchemaParser:
         processed = self.preprocess(parsed, entry_point.parent, [])
         self.root = self.from_dict(processed)
 
-        # extras = self.root.properties['meshes'].items.properties['extras']
-        # extras.properties['some'] = 1
-        # a = 0
-
-        # if self.root:
-
-        #     used: List[JsonSchema] = []
-        #     class_names: List[str] = []
-
-        #     def traverse(name: str, js: JsonSchema,
-        #                  parent: Optional[JsonSchema]):
-        #         for k, v in js.properties.items():
-        #             traverse(k, v, js)
-        #         if js.items:
-        #             traverse('[]', js.items, js)
-        #         if js not in used:
-        #             if js.get_enum_values():
-        #                 self.schemas.append(JsonSchemaItem(name, js, parent))
-        #                 used.append(js)
-        #             elif js.properties:
-        #                 name = js.get_class_name()
-        #                 if name in class_names:
-        #                     # skip duplicate class
-        #                     pass
-        #                 else:
-        #                     self.schemas.append(
-        #                         JsonSchemaItem(name, js, parent))
-        #                     class_names.append(name)
-
-        #     traverse('', self.root, None)
-
-    def print(self) -> None:
-        for key, js in self.schema_map.items():
-            print(js)
-            print('{')
-            for k, v in js.properties.items():
-                print(f'  {k}: {v}')
-            print('}')
-
     def set(self, json_path: str, ex_parser: 'JsonSchemaParser'):
         '''
         extension を 継ぎ足す
@@ -226,4 +185,3 @@ class JsonSchemaParser:
         if not ex_parser.root:
             return
         self.root.set(json_path, ex_parser.root)
-        self.schemas = ex_parser.schemas + self.schemas

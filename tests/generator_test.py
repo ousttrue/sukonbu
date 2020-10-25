@@ -1,7 +1,45 @@
+from sukonbu.json_schema_parser import JsonSchemaParser
 import unittest
 import pathlib
 HERE = pathlib.Path(__file__).absolute().parent
 import sukonbu
+
+
+def parse_gltf_schema() -> sukonbu.JsonSchemaParser:
+    path = HERE.parent / 'glTF/specification/2.0/schema/glTF.schema.json'
+    js_parser = sukonbu.JsonSchemaParser()
+    js_parser.process(path)
+
+    # extensions
+    ex_path = path.parent.parent.parent.parent / 'extensions/2.0/Khronos/KHR_materials_unlit/schema/gltf.KHR_materials_unlit.schema.json'
+    ex_parser = sukonbu.JsonSchemaParser(path.parent)
+    ex_parser.process(ex_path)
+    js_parser.set('materials[].extensions.KHR_materials_unlit', ex_parser)
+
+    # some extension
+    some = sukonbu.JsonSchemaParser()
+    some.root = sukonbu.JsonSchema(
+        type='object',
+        title='SomeExtension',
+        properties={'number': sukonbu.JsonSchema(type='int', title='number')})
+    js_parser.set('extensions.SOME_EXTENSION', some)
+
+    # extras
+    meshTargetNames = sukonbu.JsonSchemaParser()
+    meshTargetNames.root = sukonbu.JsonSchema(
+        type='array',
+        title='meshTargetNames',
+        items=sukonbu.JsonSchema(type='str'))
+    js_parser.set('meshes[].extras.targetNames', meshTargetNames)
+
+    primTargetNames = sukonbu.JsonSchemaParser()
+    primTargetNames.root = sukonbu.JsonSchema(
+        type='array',
+        title='primTargetNames',
+        items=sukonbu.JsonSchema(type='str'))
+    js_parser.set('meshes[].primitives[].extras.targetNames', meshTargetNames)
+
+    return js_parser
 
 
 class GeneratorTest(unittest.TestCase):
@@ -10,45 +48,7 @@ class GeneratorTest(unittest.TestCase):
         self.assertEqual(True, True or 1)
 
     def test_parser(self) -> None:
-        #
-        # setup
-        #
-        path = HERE.parent / 'glTF/specification/2.0/schema/glTF.schema.json'
-        js_parser = sukonbu.JsonSchemaParser()
-        js_parser.process(path)
-
-        # extensions
-        ex_path = path.parent.parent.parent.parent / 'extensions/2.0/Khronos/KHR_materials_unlit/schema/gltf.KHR_materials_unlit.schema.json'
-        ex_parser = sukonbu.JsonSchemaParser(path.parent)
-        ex_parser.process(ex_path)
-        js_parser.set('materials[].extensions.KHR_materials_unlit', ex_parser)
-
-        # some extension
-        some = sukonbu.JsonSchemaParser()
-        some.root = sukonbu.JsonSchema(type='object',
-                                       title='SomeExtension',
-                                       properties={
-                                           'number':
-                                           sukonbu.JsonSchema(type='int',
-                                                              title='number')
-                                       })
-        js_parser.set('extensions.SOME_EXTENSION', some)
-
-        # extras
-        meshTargetNames = sukonbu.JsonSchemaParser()
-        meshTargetNames.root = sukonbu.JsonSchema(
-            type='array',
-            title='meshTargetNames',
-            items=sukonbu.JsonSchema(type='str'))
-        js_parser.set('meshes[].extras.targetNames', meshTargetNames)
-
-        primTargetNames = sukonbu.JsonSchemaParser()
-        primTargetNames.root = sukonbu.JsonSchema(
-            type='array',
-            title='primTargetNames',
-            items=sukonbu.JsonSchema(type='str'))
-        js_parser.set('meshes[].primitives[].extras.targetNames',
-                      meshTargetNames)
+        js_parser = parse_gltf_schema()
 
         #
         # test
@@ -57,5 +57,7 @@ class GeneratorTest(unittest.TestCase):
         if not root:
             raise Exception()
         self.assertEqual(root.get_class_name(), 'glTF')
-        # self.assertEqual(root['extensions'].get_class_name(), 'Extension')
-        # self.assertEqual(root['extensions']['SOME_EXTENSIONS'].get_class_name(), 'SomeExtension')
+        self.assertEqual(root['extensions'].get_class_name(), 'Extension')
+        self.assertEqual(
+            root['extensions']['SOME_EXTENSIONS'].get_class_name(),
+            'SomeExtension')

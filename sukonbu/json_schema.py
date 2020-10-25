@@ -6,13 +6,16 @@ JS_PATH_EXTRACT = re.compile(r'^(\w+)(.*)')
 
 
 class JsonSchema:
-
     def __init__(self, **kw):
-        self.path: Optional[pathlib.Path] = kw.get('path')
+        # camel case の クラス名
         self.title: str = kw.get('title', '')
+        # self.title = title
+
+        self.path: Optional[pathlib.Path] = kw.get('path')
         self.type: str = kw.get('type', 'unknown')
         self.description: str = kw.get('description', '')
-        self.gltf_detailedDescription: str = kw.get('gltf_detailedDescription', '')
+        self.gltf_detailedDescription: str = kw.get('gltf_detailedDescription',
+                                                    '')
         self.default: Any = kw.get('default')
         self.gltf_webgl: Any = kw.get('gltf_webgl')
         self.gltf_uriType: Any = kw.get('gltf_uriType')
@@ -36,6 +39,9 @@ class JsonSchema:
         #
         self.dependencies: List[Any] = kw.get('dependencies', [])
         self.required: List[Any] = kw.get('required', [])
+
+    def __getitem__(self, key: str):
+        return self.properties[key]
 
     def get_enum_values(self) -> List[Any]:
         if self.anyOf:
