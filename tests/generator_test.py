@@ -56,8 +56,8 @@ class GeneratorTest(unittest.TestCase):
         root = js_parser.root
         if not root:
             raise Exception()
-        self.assertEqual(root.get_class_name(), 'glTF')
-        self.assertEqual(root['extensions'].get_class_name(), 'Extension')
+        self.assertEqual(root.title, 'glTF')
+        self.assertEqual(root['extensions'].title, 'extensions')
         self.assertEqual(
-            root['extensions']['SOME_EXTENSIONS'].get_class_name(),
+            root['extensions']['SOME_EXTENSION'].title,
             'SomeExtension')

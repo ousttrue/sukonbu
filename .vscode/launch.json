@@ -24,7 +24,7 @@
             "name": "test python gltf",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/python_test.py",
+            "program": "${workspaceFolder}/tests/python_generated_test.py",
             "console": "integratedTerminal",
         },
         {

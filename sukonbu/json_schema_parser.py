@@ -122,10 +122,10 @@ class JsonSchemaParser:
                     self.preprocess(v, directory, current + [k])
             elif key == 'items':
                 parsed[key] = self.preprocess(parsed[key], directory,
-                                              current + ['_'])
+                                              current + ['Item'])  # array item
             elif key == 'additionalProperties':
                 parsed[key] = self.preprocess(parsed[key], directory,
-                                              current + ['_'])
+                                              current + ['Value'])  # kv value
             elif key in [
                     'path',
                     'title',
@@ -166,8 +166,10 @@ class JsonSchemaParser:
             parsed['title'] = '.'.join(current)
         elif current:
             if parsed['title'] == 'Extension':
-                parsed['title'] = '.'.join(current + [parsed['title']])
+                # set name to extension
+                parsed['title'] = '.'.join(current)
             elif parsed['title'] == 'Extras':
+                # set name to extras
                 parsed['title'] = '.'.join(current)
 
         return parsed

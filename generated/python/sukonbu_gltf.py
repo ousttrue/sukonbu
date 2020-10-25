@@ -2,6 +2,13 @@
 from typing import NamedTuple, List, Any, Optional, Dict
 from enum import Enum
 
+def is_enable(value):
+    if isinstance(value, int):
+        return True
+    if value:
+        return True
+    return False
+
 
 class AccessorComponentType(Enum):
     BYTE = 5120
@@ -66,11 +73,11 @@ class AccessorSparseIndices(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.bufferView is not None: d["bufferView"] = self.bufferView # noqa
-        if self.byteOffset is not None: d["byteOffset"] = self.byteOffset # noqa
-        if self.componentType is not None: d["componentType"] = self.componentType.to_dict() # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.bufferView): d["bufferView"] = self.bufferView # noqa
+        if is_enable(self.byteOffset): d["byteOffset"] = self.byteOffset # noqa
+        if is_enable(self.componentType): d["componentType"] = self.componentType.to_dict() # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -96,10 +103,10 @@ class AccessorSparseValues(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.bufferView is not None: d["bufferView"] = self.bufferView # noqa
-        if self.byteOffset is not None: d["byteOffset"] = self.byteOffset # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.bufferView): d["bufferView"] = self.bufferView # noqa
+        if is_enable(self.byteOffset): d["byteOffset"] = self.byteOffset # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -126,11 +133,11 @@ class AccessorSparse(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.count is not None: d["count"] = self.count # noqa
-        if self.indices is not None: d["indices"] = self.indices.to_dict() # noqa
-        if self.values is not None: d["values"] = self.values.to_dict() # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.count): d["count"] = self.count # noqa
+        if is_enable(self.indices): d["indices"] = self.indices.to_dict() # noqa
+        if is_enable(self.values): d["values"] = self.values.to_dict() # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -172,18 +179,18 @@ class Accessor(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.bufferView is not None: d["bufferView"] = self.bufferView # noqa
-        if self.byteOffset is not None: d["byteOffset"] = self.byteOffset # noqa
-        if self.componentType is not None: d["componentType"] = self.componentType.to_dict() # noqa
-        if self.normalized is not None: d["normalized"] = self.normalized # noqa
-        if self.count is not None: d["count"] = self.count # noqa
-        if self.type is not None: d["type"] = self.type.to_dict() # noqa
+        if is_enable(self.bufferView): d["bufferView"] = self.bufferView # noqa
+        if is_enable(self.byteOffset): d["byteOffset"] = self.byteOffset # noqa
+        if is_enable(self.componentType): d["componentType"] = self.componentType.to_dict() # noqa
+        if is_enable(self.normalized): d["normalized"] = self.normalized # noqa
+        if is_enable(self.count): d["count"] = self.count # noqa
+        if is_enable(self.type): d["type"] = self.type.to_dict() # noqa
         if self.max: d["max"] = self.max # noqa
         if self.min: d["min"] = self.min # noqa
-        if self.sparse is not None: d["sparse"] = self.sparse.to_dict() # noqa
-        if self.name is not None: d["name"] = self.name # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.sparse): d["sparse"] = self.sparse.to_dict() # noqa
+        if is_enable(self.name): d["name"] = self.name # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -231,10 +238,10 @@ class AnimationChannelTarget(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.node is not None: d["node"] = self.node # noqa
-        if self.path is not None: d["path"] = self.path.to_dict() # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.node): d["node"] = self.node # noqa
+        if is_enable(self.path): d["path"] = self.path.to_dict() # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -259,10 +266,10 @@ class AnimationChannel(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.sampler is not None: d["sampler"] = self.sampler # noqa
-        if self.target is not None: d["target"] = self.target.to_dict() # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.sampler): d["sampler"] = self.sampler # noqa
+        if is_enable(self.target): d["target"] = self.target.to_dict() # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -303,11 +310,11 @@ class AnimationSampler(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.input is not None: d["input"] = self.input # noqa
-        if self.interpolation is not None: d["interpolation"] = self.interpolation.to_dict() # noqa
-        if self.output is not None: d["output"] = self.output # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.input): d["input"] = self.input # noqa
+        if is_enable(self.interpolation): d["interpolation"] = self.interpolation.to_dict() # noqa
+        if is_enable(self.output): d["output"] = self.output # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -337,9 +344,9 @@ class Animation(NamedTuple):
         d: Dict[str, Any] = {}
         if self.channels: d["channels"] = [item.to_dict() for item in self.channels] # noqa
         if self.samplers: d["samplers"] = [item.to_dict() for item in self.samplers] # noqa
-        if self.name is not None: d["name"] = self.name # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.name): d["name"] = self.name # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -369,12 +376,12 @@ class Asset(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.copyright is not None: d["copyright"] = self.copyright # noqa
-        if self.generator is not None: d["generator"] = self.generator # noqa
-        if self.version is not None: d["version"] = self.version # noqa
-        if self.minVersion is not None: d["minVersion"] = self.minVersion # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.copyright): d["copyright"] = self.copyright # noqa
+        if is_enable(self.generator): d["generator"] = self.generator # noqa
+        if is_enable(self.version): d["version"] = self.version # noqa
+        if is_enable(self.minVersion): d["minVersion"] = self.minVersion # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -403,11 +410,11 @@ class Buffer(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.uri is not None: d["uri"] = self.uri # noqa
-        if self.byteLength is not None: d["byteLength"] = self.byteLength # noqa
-        if self.name is not None: d["name"] = self.name # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.uri): d["uri"] = self.uri # noqa
+        if is_enable(self.byteLength): d["byteLength"] = self.byteLength # noqa
+        if is_enable(self.name): d["name"] = self.name # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -454,14 +461,14 @@ class BufferView(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.buffer is not None: d["buffer"] = self.buffer # noqa
-        if self.byteOffset is not None: d["byteOffset"] = self.byteOffset # noqa
-        if self.byteLength is not None: d["byteLength"] = self.byteLength # noqa
-        if self.byteStride is not None: d["byteStride"] = self.byteStride # noqa
-        if self.target is not None: d["target"] = self.target.to_dict() # noqa
-        if self.name is not None: d["name"] = self.name # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.buffer): d["buffer"] = self.buffer # noqa
+        if is_enable(self.byteOffset): d["byteOffset"] = self.byteOffset # noqa
+        if is_enable(self.byteLength): d["byteLength"] = self.byteLength # noqa
+        if is_enable(self.byteStride): d["byteStride"] = self.byteStride # noqa
+        if is_enable(self.target): d["target"] = self.target.to_dict() # noqa
+        if is_enable(self.name): d["name"] = self.name # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -494,12 +501,12 @@ class CameraOrthographic(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.xmag is not None: d["xmag"] = self.xmag # noqa
-        if self.ymag is not None: d["ymag"] = self.ymag # noqa
-        if self.zfar is not None: d["zfar"] = self.zfar # noqa
-        if self.znear is not None: d["znear"] = self.znear # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.xmag): d["xmag"] = self.xmag # noqa
+        if is_enable(self.ymag): d["ymag"] = self.ymag # noqa
+        if is_enable(self.zfar): d["zfar"] = self.zfar # noqa
+        if is_enable(self.znear): d["znear"] = self.znear # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -530,12 +537,12 @@ class CameraPerspective(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.aspectRatio is not None: d["aspectRatio"] = self.aspectRatio # noqa
-        if self.yfov is not None: d["yfov"] = self.yfov # noqa
-        if self.zfar is not None: d["zfar"] = self.zfar # noqa
-        if self.znear is not None: d["znear"] = self.znear # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.aspectRatio): d["aspectRatio"] = self.aspectRatio # noqa
+        if is_enable(self.yfov): d["yfov"] = self.yfov # noqa
+        if is_enable(self.zfar): d["zfar"] = self.zfar # noqa
+        if is_enable(self.znear): d["znear"] = self.znear # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -579,12 +586,12 @@ class Camera(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.orthographic is not None: d["orthographic"] = self.orthographic.to_dict() # noqa
-        if self.perspective is not None: d["perspective"] = self.perspective.to_dict() # noqa
-        if self.type is not None: d["type"] = self.type.to_dict() # noqa
-        if self.name is not None: d["name"] = self.name # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.orthographic): d["orthographic"] = self.orthographic.to_dict() # noqa
+        if is_enable(self.perspective): d["perspective"] = self.perspective.to_dict() # noqa
+        if is_enable(self.type): d["type"] = self.type.to_dict() # noqa
+        if is_enable(self.name): d["name"] = self.name # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -628,12 +635,12 @@ class Image(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.uri is not None: d["uri"] = self.uri # noqa
-        if self.mimeType is not None: d["mimeType"] = self.mimeType.to_dict() # noqa
-        if self.bufferView is not None: d["bufferView"] = self.bufferView # noqa
-        if self.name is not None: d["name"] = self.name # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.uri): d["uri"] = self.uri # noqa
+        if is_enable(self.mimeType): d["mimeType"] = self.mimeType.to_dict() # noqa
+        if is_enable(self.bufferView): d["bufferView"] = self.bufferView # noqa
+        if is_enable(self.name): d["name"] = self.name # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -648,7 +655,7 @@ class Image(NamedTuple):
         return Image(**dst)
 
 
-class KHR_materials_unlitglTFextension(NamedTuple):
+class KHR_materials_unlitGlTFExtension(NamedTuple):
     # Dictionary object with extension-specific objects.
     extensions: Optional[Dict[str, Dict[str, Any]]] = None
     # Application-specific data.
@@ -656,32 +663,32 @@ class KHR_materials_unlitglTFextension(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
-    def from_dict(src: dict) -> 'KHR_materials_unlitglTFextension':
+    def from_dict(src: dict) -> 'KHR_materials_unlitGlTFExtension':
         dst = {}
         dst["extensions"] = src.get("extensions", {})
         dst["extras"] = src.get("extras", {})
-        return KHR_materials_unlitglTFextension(**dst)
+        return KHR_materials_unlitGlTFExtension(**dst)
 
 
-class Materials_ExtensionsExtension(NamedTuple):
+class materialsItemExtensions(NamedTuple):
     # glTF extension that defines the unlit material model.
-    KHR_materials_unlit: Optional[KHR_materials_unlitglTFextension] = None
+    KHR_materials_unlit: Optional[KHR_materials_unlitGlTFExtension] = None
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.KHR_materials_unlit is not None: d["KHR_materials_unlit"] = self.KHR_materials_unlit.to_dict() # noqa
+        if is_enable(self.KHR_materials_unlit): d["KHR_materials_unlit"] = self.KHR_materials_unlit.to_dict() # noqa
         return d
 
     @staticmethod
-    def from_dict(src: dict) -> 'Materials_ExtensionsExtension':
+    def from_dict(src: dict) -> 'materialsItemExtensions':
         dst = {}
-        if "KHR_materials_unlit" in src: dst["KHR_materials_unlit"] = KHR_materials_unlitglTFextension.from_dict(src["KHR_materials_unlit"]) # noqa
-        return Materials_ExtensionsExtension(**dst)
+        if "KHR_materials_unlit" in src: dst["KHR_materials_unlit"] = KHR_materials_unlitGlTFExtension.from_dict(src["KHR_materials_unlit"]) # noqa
+        return materialsItemExtensions(**dst)
 
 
 class TextureInfo(NamedTuple):
@@ -696,10 +703,10 @@ class TextureInfo(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.index is not None: d["index"] = self.index # noqa
-        if self.texCoord is not None: d["texCoord"] = self.texCoord # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.index): d["index"] = self.index # noqa
+        if is_enable(self.texCoord): d["texCoord"] = self.texCoord # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -731,12 +738,12 @@ class MaterialPBRMetallicRoughness(NamedTuple):
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
         if self.baseColorFactor: d["baseColorFactor"] = self.baseColorFactor # noqa
-        if self.baseColorTexture is not None: d["baseColorTexture"] = self.baseColorTexture.to_dict() # noqa
-        if self.metallicFactor is not None: d["metallicFactor"] = self.metallicFactor # noqa
-        if self.roughnessFactor is not None: d["roughnessFactor"] = self.roughnessFactor # noqa
-        if self.metallicRoughnessTexture is not None: d["metallicRoughnessTexture"] = self.metallicRoughnessTexture.to_dict() # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.baseColorTexture): d["baseColorTexture"] = self.baseColorTexture.to_dict() # noqa
+        if is_enable(self.metallicFactor): d["metallicFactor"] = self.metallicFactor # noqa
+        if is_enable(self.roughnessFactor): d["roughnessFactor"] = self.roughnessFactor # noqa
+        if is_enable(self.metallicRoughnessTexture): d["metallicRoughnessTexture"] = self.metallicRoughnessTexture.to_dict() # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -766,11 +773,11 @@ class MaterialNormalTextureInfo(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.index is not None: d["index"] = self.index # noqa
-        if self.texCoord is not None: d["texCoord"] = self.texCoord # noqa
-        if self.scale is not None: d["scale"] = self.scale # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.index): d["index"] = self.index # noqa
+        if is_enable(self.texCoord): d["texCoord"] = self.texCoord # noqa
+        if is_enable(self.scale): d["scale"] = self.scale # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -798,11 +805,11 @@ class MaterialOcclusionTextureInfo(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.index is not None: d["index"] = self.index # noqa
-        if self.texCoord is not None: d["texCoord"] = self.texCoord # noqa
-        if self.strength is not None: d["strength"] = self.strength # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.index): d["index"] = self.index # noqa
+        if is_enable(self.texCoord): d["texCoord"] = self.texCoord # noqa
+        if is_enable(self.strength): d["strength"] = self.strength # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -834,7 +841,7 @@ class Material(NamedTuple):
     # The user-defined name of this object.
     name: Optional[str] = None
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Materials_ExtensionsExtension] = None
+    extensions: Optional[materialsItemExtensions] = None
     # Application-specific data.
     extras: Optional[Dict[str, Any]] = None
     # A set of parameter values that are used to define the metallic-roughness material model from Physically-Based Rendering (PBR) methodology.
@@ -856,24 +863,24 @@ class Material(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.name is not None: d["name"] = self.name # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions.to_dict() # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
-        if self.pbrMetallicRoughness is not None: d["pbrMetallicRoughness"] = self.pbrMetallicRoughness.to_dict() # noqa
-        if self.normalTexture is not None: d["normalTexture"] = self.normalTexture.to_dict() # noqa
-        if self.occlusionTexture is not None: d["occlusionTexture"] = self.occlusionTexture.to_dict() # noqa
-        if self.emissiveTexture is not None: d["emissiveTexture"] = self.emissiveTexture.to_dict() # noqa
+        if is_enable(self.name): d["name"] = self.name # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions.to_dict() # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
+        if is_enable(self.pbrMetallicRoughness): d["pbrMetallicRoughness"] = self.pbrMetallicRoughness.to_dict() # noqa
+        if is_enable(self.normalTexture): d["normalTexture"] = self.normalTexture.to_dict() # noqa
+        if is_enable(self.occlusionTexture): d["occlusionTexture"] = self.occlusionTexture.to_dict() # noqa
+        if is_enable(self.emissiveTexture): d["emissiveTexture"] = self.emissiveTexture.to_dict() # noqa
         if self.emissiveFactor: d["emissiveFactor"] = self.emissiveFactor # noqa
-        if self.alphaMode is not None: d["alphaMode"] = self.alphaMode.to_dict() # noqa
-        if self.alphaCutoff is not None: d["alphaCutoff"] = self.alphaCutoff # noqa
-        if self.doubleSided is not None: d["doubleSided"] = self.doubleSided # noqa
+        if is_enable(self.alphaMode): d["alphaMode"] = self.alphaMode.to_dict() # noqa
+        if is_enable(self.alphaCutoff): d["alphaCutoff"] = self.alphaCutoff # noqa
+        if is_enable(self.doubleSided): d["doubleSided"] = self.doubleSided # noqa
         return d
 
     @staticmethod
     def from_dict(src: dict) -> 'Material':
         dst = {}
         if "name" in src: dst["name"] = src["name"] # noqa copy
-        if "extensions" in src: dst["extensions"] = Materials_ExtensionsExtension.from_dict(src["extensions"]) # noqa
+        if "extensions" in src: dst["extensions"] = materialsItemExtensions.from_dict(src["extensions"]) # noqa
         dst["extras"] = src.get("extras", {})
         if "pbrMetallicRoughness" in src: dst["pbrMetallicRoughness"] = MaterialPBRMetallicRoughness.from_dict(src["pbrMetallicRoughness"]) # noqa
         if "normalTexture" in src: dst["normalTexture"] = MaterialNormalTextureInfo.from_dict(src["normalTexture"]) # noqa
@@ -922,13 +929,13 @@ class MeshPrimitive(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.attributes is not None: d["attributes"] = self.attributes # noqa
-        if self.indices is not None: d["indices"] = self.indices # noqa
-        if self.material is not None: d["material"] = self.material # noqa
-        if self.mode is not None: d["mode"] = self.mode.to_dict() # noqa
+        if is_enable(self.attributes): d["attributes"] = self.attributes # noqa
+        if is_enable(self.indices): d["indices"] = self.indices # noqa
+        if is_enable(self.material): d["material"] = self.material # noqa
+        if is_enable(self.mode): d["mode"] = self.mode.to_dict() # noqa
         if self.targets: d["targets"] = self.targets # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -960,9 +967,9 @@ class Mesh(NamedTuple):
         d: Dict[str, Any] = {}
         if self.primitives: d["primitives"] = [item.to_dict() for item in self.primitives] # noqa
         if self.weights: d["weights"] = self.weights # noqa
-        if self.name is not None: d["name"] = self.name # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.name): d["name"] = self.name # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -1004,18 +1011,18 @@ class Node(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.camera is not None: d["camera"] = self.camera # noqa
+        if is_enable(self.camera): d["camera"] = self.camera # noqa
         if self.children: d["children"] = self.children # noqa
-        if self.skin is not None: d["skin"] = self.skin # noqa
+        if is_enable(self.skin): d["skin"] = self.skin # noqa
         if self.matrix: d["matrix"] = self.matrix # noqa
-        if self.mesh is not None: d["mesh"] = self.mesh # noqa
+        if is_enable(self.mesh): d["mesh"] = self.mesh # noqa
         if self.rotation: d["rotation"] = self.rotation # noqa
         if self.scale: d["scale"] = self.scale # noqa
         if self.translation: d["translation"] = self.translation # noqa
         if self.weights: d["weights"] = self.weights # noqa
-        if self.name is not None: d["name"] = self.name # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.name): d["name"] = self.name # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -1112,13 +1119,13 @@ class Sampler(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.magFilter is not None: d["magFilter"] = self.magFilter.to_dict() # noqa
-        if self.minFilter is not None: d["minFilter"] = self.minFilter.to_dict() # noqa
-        if self.wrapS is not None: d["wrapS"] = self.wrapS.to_dict() # noqa
-        if self.wrapT is not None: d["wrapT"] = self.wrapT.to_dict() # noqa
-        if self.name is not None: d["name"] = self.name # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.magFilter): d["magFilter"] = self.magFilter.to_dict() # noqa
+        if is_enable(self.minFilter): d["minFilter"] = self.minFilter.to_dict() # noqa
+        if is_enable(self.wrapS): d["wrapS"] = self.wrapS.to_dict() # noqa
+        if is_enable(self.wrapT): d["wrapT"] = self.wrapT.to_dict() # noqa
+        if is_enable(self.name): d["name"] = self.name # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -1147,9 +1154,9 @@ class Scene(NamedTuple):
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
         if self.nodes: d["nodes"] = self.nodes # noqa
-        if self.name is not None: d["name"] = self.name # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.name): d["name"] = self.name # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -1178,12 +1185,12 @@ class Skin(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.inverseBindMatrices is not None: d["inverseBindMatrices"] = self.inverseBindMatrices # noqa
-        if self.skeleton is not None: d["skeleton"] = self.skeleton # noqa
+        if is_enable(self.inverseBindMatrices): d["inverseBindMatrices"] = self.inverseBindMatrices # noqa
+        if is_enable(self.skeleton): d["skeleton"] = self.skeleton # noqa
         if self.joints: d["joints"] = self.joints # noqa
-        if self.name is not None: d["name"] = self.name # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.name): d["name"] = self.name # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -1212,11 +1219,11 @@ class Texture(NamedTuple):
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
-        if self.sampler is not None: d["sampler"] = self.sampler # noqa
-        if self.source is not None: d["source"] = self.source # noqa
-        if self.name is not None: d["name"] = self.name # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.sampler): d["sampler"] = self.sampler # noqa
+        if is_enable(self.source): d["source"] = self.source # noqa
+        if is_enable(self.name): d["name"] = self.name # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod
@@ -1276,7 +1283,7 @@ class glTF(NamedTuple):
         if self.extensionsRequired: d["extensionsRequired"] = self.extensionsRequired # noqa
         if self.accessors: d["accessors"] = [item.to_dict() for item in self.accessors] # noqa
         if self.animations: d["animations"] = [item.to_dict() for item in self.animations] # noqa
-        if self.asset is not None: d["asset"] = self.asset.to_dict() # noqa
+        if is_enable(self.asset): d["asset"] = self.asset.to_dict() # noqa
         if self.buffers: d["buffers"] = [item.to_dict() for item in self.buffers] # noqa
         if self.bufferViews: d["bufferViews"] = [item.to_dict() for item in self.bufferViews] # noqa
         if self.cameras: d["cameras"] = [item.to_dict() for item in self.cameras] # noqa
@@ -1285,12 +1292,12 @@ class glTF(NamedTuple):
         if self.meshes: d["meshes"] = [item.to_dict() for item in self.meshes] # noqa
         if self.nodes: d["nodes"] = [item.to_dict() for item in self.nodes] # noqa
         if self.samplers: d["samplers"] = [item.to_dict() for item in self.samplers] # noqa
-        if self.scene is not None: d["scene"] = self.scene # noqa
+        if is_enable(self.scene): d["scene"] = self.scene # noqa
         if self.scenes: d["scenes"] = [item.to_dict() for item in self.scenes] # noqa
         if self.skins: d["skins"] = [item.to_dict() for item in self.skins] # noqa
         if self.textures: d["textures"] = [item.to_dict() for item in self.textures] # noqa
-        if self.extensions is not None: d["extensions"] = self.extensions # noqa
-        if self.extras is not None: d["extras"] = self.extras # noqa
+        if is_enable(self.extensions): d["extensions"] = self.extensions # noqa
+        if is_enable(self.extras): d["extras"] = self.extras # noqa
         return d
 
     @staticmethod

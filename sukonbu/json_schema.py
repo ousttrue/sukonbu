@@ -1,15 +1,23 @@
+import enum
 from typing import NamedTuple, Any, Optional, List, Dict
 import pathlib
 import re
 
 JS_PATH_EXTRACT = re.compile(r'^(\w+)(.*)')
+DELEMETER = re.compile(r'[\.| ]')
+
+
+def lowerCamel(src: str) -> str:
+    splited = DELEMETER.split(src)
+    for i in range(1, len(splited)):
+        s = splited[i]
+        splited[i] = s[0].upper() + s[1:]
+    return ''.join(splited)
 
 
 class JsonSchema:
     def __init__(self, **kw):
-        # camel case の クラス名
         self.title: str = kw.get('title', '')
-        # self.title = title
 
         self.path: Optional[pathlib.Path] = kw.get('path')
         self.type: str = kw.get('type', 'unknown')
@@ -39,6 +47,27 @@ class JsonSchema:
         #
         self.dependencies: List[Any] = kw.get('dependencies', [])
         self.required: List[Any] = kw.get('required', [])
+
+        # camel case の クラス名
+        if 'KHR_materials_unlit' in self.title:
+            a = 0
+
+        if self.type in [
+                'null',
+                'boolean',
+                'integer',
+                'number',
+                'string',
+                # 'object',
+                'array',
+                # 'unknown',
+        ]:
+            if self.get_enum_values():
+                pass
+            else:
+                self.title = self.type
+        else:
+            self.title = lowerCamel(self.title)
 
     def __getitem__(self, key: str):
         return self.properties[key]
@@ -75,26 +104,6 @@ class JsonSchema:
             return f'{self.items.title_or_type()}[]'
         else:
             return self.title_or_type()
-
-    def get_class_name(self):
-        if self.type in [
-                'null',
-                'bool',
-                'int',
-                'number',
-                'string',
-                'object',
-                'array',
-                'unknown',
-        ]:
-            if self.properties:
-                title = self.title
-                if '.' in self.title:
-                    splited = self.title.split('.')
-                    title = ''.join(s[0].upper() + s[1:] for s in splited)
-                return title.replace(' ', '')
-
-        return self.type
 
     def set(self, json_path: str, schema):
         m = JS_PATH_EXTRACT.match(json_path)
