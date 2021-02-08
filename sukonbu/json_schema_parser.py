@@ -180,11 +180,3 @@ class JsonSchemaParser:
         parsed = json.loads(text)
         processed = self.preprocess(parsed, entry_point.parent, [])
         self.root = self.from_dict(processed)
-
-    def set(self, json_path: str, ex_parser: 'JsonSchemaParser'):
-        '''
-        extension を 継ぎ足す
-        '''
-        if not ex_parser.root:
-            return
-        self.root.set(json_path, ex_parser.root)
