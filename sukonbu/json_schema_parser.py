@@ -61,7 +61,7 @@ class JsonSchemaParser:
         # ref = self.path_map.get(path)
         # if ref:
         #     return ref
-        text = path.read_text()
+        text = path.read_text(encoding='utf-8')
         ref_parsed = json.loads(text)
         ref = self.preprocess(ref_parsed, path.parent, current)
         self.path_map[path] = ref
