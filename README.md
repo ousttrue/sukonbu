@@ -1,25 +1,9 @@
-# GltfFormat
-
-## gltfformat
-
-generated gltf reader.
-
-## sukonbu
+# sukonbu
 
 JSON Schema converter.
 A code generator for GLTF read/write.
 
-JSON Schema is not compatible with statically typed serialization.
-For example, a statically typed language cannot assign `null` to an `int` field.
-However, JSON Schema can skip unnecessary object properties, which are manipulated as `null`.
-
-So I made this.
-
-* generate serialized containers(Force all object properties to be nullable)
-* generate deserializer for that containers
-* generate serializer for that containers(Skip unnecessary object properties)
-
-### ToDo
+## ToDo
 
 * [x] python generator(TypedDict)
 * [ ] (WIP)D generator
@@ -27,15 +11,13 @@ So I made this.
 * [x] (WIP)C++ generator
 * [x] manipulate Extensions and Extras
 
-### Usage
+## Usage
 
 ```
-$ python -m sukonbu.cli PATH_TO_GLTF_JSONSCHEMA --lang python --dst PATH_TO_GENERATE_FILE
+$ python -m sukonbu PATH_TO_GLTF_JSONSCHEMA --lang python --dst PATH_TO_GENERATE_FILE
 ```
 
-### examples
-
-#### extension handling
+### extension handling
 
 ```py
     unlit_path = gltf_path.parent.parent.parent.parent / 'extensions/2.0/Khronos/KHR_materials_unlit/schema/gltf.KHR_materials_unlit.schema.json'
@@ -44,9 +26,21 @@ $ python -m sukonbu.cli PATH_TO_GLTF_JSONSCHEMA --lang python --dst PATH_TO_GENE
     js_parser.set('materials[].extensions.KHR_materials_unlit', unlit)
 ```
 
-#### python3 with typing
+## python
+
+### python3 with typing
 
 ```py
+class MeshPrimitiveMode(Enum):
+    POINTS = 0
+    LINES = 1
+    LINE_LOOP = 2
+    LINE_STRIP = 3
+    TRIANGLES = 4
+    TRIANGLE_STRIP = 5
+    TRIANGLE_FAN = 6
+
+
 class MeshPrimitiveRequired(TypedDict):
     # A dictionary object, where each key corresponds to mesh attribute semantic and each value is the index of the accessor containing attribute's data.
     attributes: Dict[str, int]
@@ -71,3 +65,18 @@ class MeshPrimitiveOptional(TypedDict, total=False):
 class MeshPrimitive(MeshPrimitiveRequired, MeshPrimitiveOptional):
     pass
 ```
+
+## c++
+
+JSON Schema is not compatible with statically typed serialization.
+For example, a statically typed language cannot assign `null` to an `int` field.
+However, JSON Schema can skip unnecessary object properties, which are manipulated as `null`.
+
+So I made this.
+
+* generate serialized containers(Force all object properties to be nullable)
+* generate deserializer for that containers
+* generate serializer for that containers(Skip unnecessary object properties)
+
+[gltf.h](gltfformat/include/gltfformat/gltf.h)
+  
