@@ -71,7 +71,7 @@ def js_to_dlang_type(name: str, js: JsonSchema, parent: JsonSchema) -> str:
     if js.title in ['Extension', 'Extras']:
         return js.get_class_name()
 
-    enum_values = js.get_enum_values()
+    enum_values = js.enumerate_values()
     if enum_values:
         return get_enum_name(name, js, parent)
 
@@ -141,7 +141,7 @@ def read_func(name: str, js: JsonSchema, parent: Optional[JsonSchema]) -> str:
     '''
     fromJSON
     '''
-    if js.get_enum_values():
+    if js.enumerate_values():
         if not parent:
             raise Exception()
         if js.type == 'string':
@@ -220,7 +220,7 @@ def generate(parser: JsonSchemaParser, dst: pathlib.Path) -> None:
         w.write(DLANG_HEAD)
 
         for key, js, parent in schemas:
-            enum_values = js.get_enum_values()
+            enum_values = js.enumerate_values()
             if enum_values:
                 if not parent:
                     raise Exception()

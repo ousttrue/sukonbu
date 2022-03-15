@@ -46,7 +46,7 @@ def js_to_cpp_type(name: str, js: JsonSchema, parent: JsonSchema) -> str:
     if js.title in ['Extension', 'Extras']:
         return js.get_class_name()
 
-    enum_values = js.get_enum_values()
+    enum_values = js.enumerate_values()
     if enum_values:
         return js.title
 
@@ -100,7 +100,7 @@ def enum_read_func(js: JsonSchema) -> str:
         return f'p = ({js.title})j.get<int>();'
     elif js.type == 'string':
         func = f'auto value = j.get<std::string>();'
-        for enum_value in js.get_enum_values():
+        for enum_value in js.enumerate_values():
             func += f'\n    if(value=="{enum_value}")p = {js.title}::{escape_enum(enum_value)};'
         return func
     else:
@@ -108,7 +108,7 @@ def enum_read_func(js: JsonSchema) -> str:
 
 
 def add_optional(js: JsonSchema, src: str, required: bool) -> str:
-    if js.type == 'string' and js.get_enum_values():
+    if js.type == 'string' and js.enumerate_values():
         return f'std::optional<{src}>'
 
     if js.type in ['string', 'array', 'enum']:

@@ -62,7 +62,7 @@ class JsonSchema:
                 'array',
                 # 'unknown',
         ]:
-            if self.get_enum_values():
+            if self.enumerate_values():
                 pass
             else:
                 self.title = self.type
@@ -72,7 +72,7 @@ class JsonSchema:
     def __getitem__(self, key: str):
         return self.properties[key]
 
-    def get_enum_values(self) -> List[Any]:
+    def enumerate_values(self) -> List[Any]:
         if self.anyOf:
 
             def enum_value(value):
@@ -90,7 +90,7 @@ class JsonSchema:
     def title_or_type(self):
         value = f'{self.title}({self.type})' if self.title else self.type
 
-        enum_values = self.get_enum_values()
+        enum_values = self.enumerate_values()
         if enum_values:
             value = f'enum {value} {{' + ', '.join(enum_values) + '}'
         # if self.path:

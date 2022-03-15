@@ -14,16 +14,13 @@ class SukonbuGltfTest(unittest.TestCase):
         # print(gltf, gltf.exists())
         with open(path) as r:
             json_bytes = r.read()
-        json_dict = json.loads(json_bytes)
+        gltf: sukonbu_gltf.glTF = json.loads(json_bytes)
 
-        gltf = sukonbu_gltf.glTF.from_dict(json_dict)
+        accessors = gltf.get('accessors')
+        assert(accessors)
 
-        export = gltf.to_dict()
-
-        self.assertEqual(json_dict, export)
-
-        self.assertEqual(sukonbu_gltf.AccessorComponentType.FLOAT,
-                         gltf.accessors[0].componentType)
+        self.assertEqual(sukonbu_gltf.AccessorComponentType.FLOAT.value,
+                         accessors[0]['componentType'])
 
 
 if __name__ == '__main__':

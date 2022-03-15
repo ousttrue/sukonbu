@@ -21,7 +21,7 @@ So I made this.
 
 ### ToDo
 
-* [x] python generator
+* [x] python generator(TypedDict)
 * [ ] (WIP)D generator
 * [ ] C# generator
 * [x] (WIP)C++ generator
@@ -47,19 +47,27 @@ $ python -m sukonbu.cli PATH_TO_GLTF_JSONSCHEMA --lang python --dst PATH_TO_GENE
 #### python3 with typing
 
 ```py
-class MeshPrimitive(NamedTuple):
+class MeshPrimitiveRequired(TypedDict):
     # A dictionary object, where each key corresponds to mesh attribute semantic and each value is the index of the accessor containing attribute's data.
-    attributes: Optional[Dict[str, int]] = None
-    # The index of the bufferView.
-    indices: Optional[int] = None
-    # The index of the bufferView.
-    material: Optional[int] = None
+    attributes: Dict[str, int]
+
+
+class MeshPrimitiveOptional(TypedDict, total=False):
+    # The index of the accessor that contains the indices.
+    indices: int
+    # The index of the material to apply to this primitive when rendering.
+    material: int
     # The type of primitives to render.
-    mode: Optional[MeshPrimitiveMode] = None
+    # default=4
+    mode: MeshPrimitiveMode
     # An array of Morph Targets, each  Morph Target is a dictionary mapping attributes (only `POSITION`, `NORMAL`, and `TANGENT` supported) to their deviations in the Morph Target.
-    targets: Optional[List[Dict[str, int]]] = None
+    targets: List[Dict[str, int]]
     # Dictionary object with extension-specific objects.
-    extensions: Optional[Dict[str, Any]] = None
+    extensions: dict
     # Application-specific data.
-    extras: Optional[Dict[str, Any]] = None
+    extras: dict
+
+
+class MeshPrimitive(MeshPrimitiveRequired, MeshPrimitiveOptional):
+    pass
 ```

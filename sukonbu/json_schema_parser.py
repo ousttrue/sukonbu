@@ -1,6 +1,6 @@
+from typing import Optional, NamedTuple, List
 import json
 import pathlib
-from typing import Dict, Optional, NamedTuple, List
 from .json_schema import JsonSchema
 
 
@@ -45,9 +45,12 @@ class JsonSchemaParser:
                 node['title'] = parent['title'].replace(
                     ' ', '') + key[0:1].upper() + key[1:]
 
-            if 'properties' not in node: node['properties'] = {}
-            if 'dependencies' not in node: node['dependencies'] = []
-            if 'required' not in node: node['required'] = []
+            if 'properties' not in node:
+                node['properties'] = {}
+            if 'dependencies' not in node:
+                node['dependencies'] = []
+            if 'required' not in node:
+                node['required'] = []
             return JsonSchema(**node)
 
         return traverse(root)
@@ -56,6 +59,7 @@ class JsonSchemaParser:
                         current: List[str]) -> dict:
         path = dir / filename
         if not path.exists():
+            assert(self.dir)
             path = self.dir / filename
 
         # ref = self.path_map.get(path)

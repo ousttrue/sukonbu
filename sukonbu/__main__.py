@@ -1,8 +1,4 @@
-import sys
 import pathlib
-import json
-import io
-from typing import NamedTuple, Any, List, Dict, Optional, TextIO
 from sukonbu.json_schema_parser import JsonSchemaParser
 from sukonbu.generators import python, dlang, cpp
 import argparse
@@ -35,7 +31,8 @@ def main():
     js_parser.process(gltf_path)
 
     # extensions
-    ex_path = gltf_path.parent.parent.parent.parent / 'extensions/2.0/Khronos/KHR_materials_unlit/schema/gltf.KHR_materials_unlit.schema.json'
+    ex_path = gltf_path.parent.parent.parent.parent / \
+        'extensions/2.0/Khronos/KHR_materials_unlit/schema/gltf.KHR_materials_unlit.schema.json'
     print(ex_path)
     ex_parser = JsonSchemaParser(gltf_path.parent)
     ex_parser.process(ex_path)
