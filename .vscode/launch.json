@@ -8,7 +8,7 @@
             "name": "generate cpp",
             "type": "python",
             "request": "launch",
-            "module": "sukonbu.cli",
+            "module": "sukonbu",
             "args": [
                 "${workspaceFolder}/glTF/specification/2.0/schema/glTF.schema.json",
                 "--lang",
@@ -31,7 +31,7 @@
             "name": "generate python",
             "type": "python",
             "request": "launch",
-            "module": "sukonbu.cli",
+            "module": "sukonbu",
             "args": [
                 "${workspaceFolder}/glTF/specification/2.0/schema/glTF.schema.json",
                 "--dst",
